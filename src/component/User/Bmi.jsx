@@ -1,8 +1,29 @@
-import React from 'react'
+import React, { useState,useEffect } from 'react';
 import Header from './Header'
 import Footer from './Footer'
 
 const Bmi = () => {
+  const [BmiData, setBmiData] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/contactus");
+        if (response.ok) {
+          const data = await response.json();
+          setBmiData(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
   return (
     <div>
        <Header/>
@@ -25,13 +46,15 @@ const Bmi = () => {
                     moveRangeOnFirstSelection={false}
                     ranges={state}
                   /> */}
+                  
                 </form>
                 <div className="card-body">
+             
                   <table className="table table-striped">
                     <thead className='table-primary'>
                       <tr>
                         <th scope="col">Sr No.</th>
-                        <th scope="col">Issue Date</th>
+                        <th scope="col">Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Date</th>
                         <th scope="col">View</th>
@@ -39,48 +62,15 @@ const Bmi = () => {
                     </thead>
                     <tbody>
                       <tr></tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
+                      {BmiData.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.index}</td>
+                        <td>{item.name}</td>
+                        <td>{item.Description}</td>
+                        <td>{item.Date}</td>
                         <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
                       </tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
-                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
-                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
-                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
-                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>11-Jan-2022</td>
-                        <td>पोलीस शिपाई पदावर अस्थायी व तात्पुरत्या स्वरूपात नियुक्तीबाबत</td>
-                        <td>11-Jan-2022</td>
-                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                      </tr>
+                    ))}
 
                     </tbody>
                   </table>

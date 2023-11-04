@@ -20,7 +20,6 @@ const BuddyBench = () => {
             </div>
             <div class="col-sm-9 card bgcolorone">
             <img src="/assets/Image/helppolice2.jpg" class="card-img-top mx-auto pt-3" alt="card" />
-      
             </div>
           </div>
           {/* Officer′s Profile end */}

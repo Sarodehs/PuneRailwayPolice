@@ -52,6 +52,8 @@ const Aboutus = () => {
           </div>
           {/* carousel end */}
           <ReactWhatsapp number="1-212-736-5000" message="Hello World!!!"/>
+          {/* <a href="https:/wa.me/country_code_and_your_phone_number"  target="_blank" class="whatsapp_float"><i class="fa-brands fa-whatsapp whatsapp-icon"></i></a> */}
+
           {/* Officer′s Profile start */}
           <div class="row p-5 ">
             <div class="col-sm-4 card bg-light aboutcardscroll pt-3 ">
