@@ -65,6 +65,11 @@ const Sidenav = () => {
                         </a></NavLink>
                     </li>
                     <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
+                        <NavLink to="/adminpolicestation" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
+                        <span className="material-icons">east</span><span className="ms-3 d-none d-md-inline">Police Station</span>
+                        </a></NavLink>
+                    </li>
+                    <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
                         <NavLink to="/adminspecialunit" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
                         <span className="material-icons">east</span><span className="ms-3 d-none d-md-inline">Special Unit</span>
                         </a></NavLink>
@@ -112,6 +117,11 @@ const Sidenav = () => {
                     <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
                         <NavLink to="/adminrtirementlist" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
                         <span className="material-icons">east</span><span className="ms-3 d-none d-md-inline">Rtirement List</span>
+                        </a></NavLink>
+                    </li>
+                    <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
+                        <NavLink to="/adminincrementlist" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
+                        <span className="material-icons">east</span><span className="ms-3 d-none d-md-inline">Increment List</span>
                         </a></NavLink>
                     </li>
                     <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
