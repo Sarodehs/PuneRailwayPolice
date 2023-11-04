@@ -29,7 +29,9 @@ html,body
     overflow-y: auto;
 }
 
-
+.btn-primary,.page-item.active .page-link{
+  background-color: #0F398D !important;
+}
 
 
 
@@ -40,7 +42,7 @@ html,body
   display: none; /* for Chrome, Safari, and Opera */
 }
 .adminsidebarscroll{
-  max-height: 600px;
+  max-height:1000px;
   overflow-y: auto;
 }
 .adminbgcolor{
