@@ -28,6 +28,11 @@ html,body
     max-height: 500px;
     overflow-y: auto;
 }
+.admintablesroll{
+  max-width: auto;
+  overflow-x: auto;
+
+}
 
 .btn-primary,.page-item.active .page-link{
   background-color: #0F398D !important;
@@ -92,7 +97,23 @@ html,body
      text-decoration: none; 
   
   }
-  
+  .social-icons.facebook {
+    font-size: 2rem;
+    margin-right: 10px;
+    color: #007bff; /* Facebook blue color */
+  }
+
+  .social-icons.linkedin {
+    color: #0a66c2; /* LinkedIn blue color */
+  }
+
+  .social-icons.twitter {
+    color: #1da1f2; /* Twitter blue color */
+  }
+
+  .social-icons.whatsapp{
+    color: green;
+  }
 /*   
   .bg-light{
          background-color: #fff !important;
@@ -146,4 +167,38 @@ html,body
      }
   
        */
-  
+      /* .quiclink .src-FlippingCard-FlippingCardFront-styles-module__front--0CD5y {
+        position: absolute;
+        width:  20px !important;
+        height: 20px !important;
+        backface-visibility: hidden;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        transform: rotateY(0deg);
+        border-radius: 0.2rem;
+        overflow: hidden;
+    }
+
+    .quiclink .src-FlippingCard-styles-module__flipping-card--sRxLr {
+      position: absolute;
+      width: 100%;
+      height: 20px;
+      perspective: 1000px;
+      transition: .5s;
+      transform-style: preserve-3d;
+  } */
+  .quiclink .src-Card-styles-module__card--9xEbS {
+    position: relative;
+    max-width: 100%;
+    width: 235px;
+    min-width: 50px;
+    min-height: 60px;
+    display: flex;
+    flex-flow: column;
+    /* background-color: #ecf0f1; */
+    border-radius: 0.25rem;
+    margin: 1rem;
+    user-select: none;
+    transition: .25s;
+}
