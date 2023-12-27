@@ -20,7 +20,14 @@ const LostFound = () => {
   
     const handleSubmit = (e) => {
       e.preventDefault();
-      console.log('Form submitted with data:', {
+  
+      // Validate reCAPTCHA
+      // if (!recaptchaValue) {
+      //   alert('Please complete the reCAPTCHA verification.');
+      //   return;
+      // }
+  
+      const formData = {
         reportType,
         policeStation,
         lostDate,
@@ -33,27 +40,50 @@ const LostFound = () => {
         pincode,
         articleDescription,
         robotChecked,
-      });
+      };
+  
+      // Send a POST request to the appropriate API endpoint based on report type
+      const apiUrl = reportType === 'Lost' ? 'http://localhost:5000/forms/lostReportItem' : 'http://localhost:5000/forms/foundItemReport';
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log(`${reportType} Item Report submitted successfully!`);
+            // You can reset the form or perform any other action after successful submission
+          } else {
+            return response.json().then((data) => {
+              console.error(`Failed to submit ${reportType} Item Report:, data`);
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(`Error submitting ${reportType} Item Report:, error.message`);
+        });
     };
   
   return (
     <div>
   <Header/>
-  <div className="container mt-5">
+  <div className="container mt-5 mb-5">
       <div className="row justify-content-center">
         <div className="col-md-9">
-          <div className="card">
+          <div className="bgcolortwo">
             <div className="card-body">
               <div className="text-center mb-3">
                 <button
-                  className={`btn btn-primary m-3 ${reportType === 'Lost' ? 'active' : ''}`}
-                  onClick={() => setReportType('Lost')}
+                  className={`btn btn-primary m-3 ${reportType === 'Lost' ? 'active' : ''}}
+                  onClick={() => setReportType('Lost')`}
                 >
                   Lost Item Report
                 </button>
                 <button
-                  className={`btn btn-primary m-3 ${reportType === 'Found' ? 'active' : ''}`}
-                  onClick={() => setReportType('Found')}
+                  className={`btn btn-primary m-3 ${reportType === 'Found' ? 'active' : ''}}
+                  onClick={() => setReportType('Found')`}
                 >
                   Found Item Report
                 </button>

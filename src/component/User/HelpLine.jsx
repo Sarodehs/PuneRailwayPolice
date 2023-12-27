@@ -103,7 +103,7 @@ const HelpLine = () => {
     <div>
         <Header/>
         <div className="container">
-      <div className="card">
+      <div className="">
         <h1 className="card-title text-center mt-5">Railway Police Helpline</h1>
         <div className="card-body">
           <div className="row justify-content-center">

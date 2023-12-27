@@ -1,11 +1,57 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import Header from './Header'
 import Footer from './Footer'
 
-import ReactWhatsapp from 'react-whatsapp';
+
 
 
 const Aboutus = () => {
+
+  const [Sps, setSps] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/sp");
+        if (response.ok) {
+          const data = await response.json();
+          setSps(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
+
+
+  const [Officer, setOfficer] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/officer");
+        if (response.ok) {
+          const data = await response.json();
+          setOfficer(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div> <div>
@@ -51,164 +97,39 @@ const Aboutus = () => {
             </button>
           </div>
           {/* carousel end */}
-          <ReactWhatsapp number="1-212-736-5000" message="Hello World!!!"/>
-          {/* <a href="https:/wa.me/country_code_and_your_phone_number"  target="_blank" class="whatsapp_float"><i class="fa-brands fa-whatsapp whatsapp-icon"></i></a> */}
+       
 
           {/* Officer′s Profile start */}
           <div class="row p-5 ">
             <div class="col-sm-4 card bg-light aboutcardscroll pt-3 ">
               <h2 className='text-center'>SPs Till Date</h2>
+              {Sps.map((item, index) => (
               <div class="card " >
                 <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
+                  <h5 class="card-title">{item.name}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">From : {item.fromDate}  TO  {item.toDate} </h6>
                 </div>
               </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
-              <div class="card " >
-                <div class="card-body bgcolorone">
-                  <h5 class="card-title">A.R. BRAGANZA</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">From :  1960-04-23  TO  1963-06-01 </h6>
-                </div>
-              </div>
+              ))}
 
             </div>
             <div class="col-sm-7 card ms-2 bg-light">
               <h2 className='text-center '>Officer′s Profile</h2>
 
               <div class="row row-cols-1 row-cols-md-4 g-4">
-             
+              {Officer.map((item, index) => (
                 <div class="col ">
                   <div class="card h-100 text-center">
-                    <img src="  /assets/Image/policeofficer.png" class="card-img-top ps-3 pe-3 pt-1" alt="card" />
+                  {/* <img key={item._id} src={`http://localhost:5000/${item.image}`} alt="Albumimage" className="img-fluid w-25"/> */}
+                    <img src={`http://localhost:5000/${item.image}`}  class="card-img-top ps-3 pe-3 pt-1" alt="card" />
                     <div class="card-body">
-                      <h5 class="card-title">Citizen Service</h5>
+                      <h5 class="card-title">{item.name}</h5>
                     </div>
                   </div>
                 </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top  ps-3 pe-3 pt-1" alt="card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Our Work</h5>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top ps-3 pe-3 pt-1" alt="card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Recruitment</h5>
-
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top ps-3 pe-3 pt-1" alt="card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Press Release</h5>
-
-                    </div>
-                  </div>
-                </div>
+                ))}
               </div>
-              <div class="row row-cols-1 row-cols-md-4  pt-3 g-4">
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top  ps-3 pe-3 pt-1" alt="card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Useful Links</h5>
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top  ps-3 pe-3 pt-1" alt="Card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Contact Us</h5>
-
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top  ps-3 pe-3 pt-1" alt="Card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Train Service</h5>
-
-                    </div>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="card h-100 text-center">
-                    <img src="/assets/Image/policeofficer.png" class="card-img-top  ps-3 pe-3 pt-1" alt="card" />
-                    <div class="card-body">
-                      <h5 class="card-title">Railway Map</h5>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
+          
 
             </div>
           </div>
@@ -312,30 +233,31 @@ const Aboutus = () => {
 
         </div>
 
-
-
-        {/* Location & Jurisdiction Map start */}
+       
+          {/* Location & Jurisdiction Map start */}
         <div class="row p-5 bg-light">
           <h2 className='text-center'>Location & Jurisdiction Map</h2>
           <div class="col-sm-5 offset-1">
             <div class="card">
-              <img src="/assets/Image/image1.png" class="card-img-top" alt="profile" />
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7566.013672944764!2d73.8741151!3d18.5285932!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c123e61be033%3A0x4cb43d9aabd553c9!2sPune%20Railway%20Police%20Station!5e0!3m2!1sen!2sin!4v1702553301075!5m2!1sen!2sin"
+              width="600" height="400" style={{border:0}} class="card-img-top" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+     
 
               <div class="card-body ">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="/#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Location</h5>
+                <p class="card-text">GVHG+G2C, Station Rd, Agarkar Nagar, Pune, Maharashtra 411001</p>
+                <a href="https://www.google.com/maps/place/Pune+Railway+Police+Station/@18.5285932,73.8741151,16z/data=!4m6!3m5!1s0x3bc2c123e61be033:0x4cb43d9aabd553c9!8m2!3d18.5288233!4d73.8750283!16s%2Fg%2F11gj0zwfcs?hl=en&entry=ttu" class="btn btn-primary">Go somewhere</a>
               </div>
             </div>
           </div>
           <div class="col-sm-5 ">
             <div class="card ">
-              <img src="/assets/Image/image1.png" class="card-img-top" alt="profile" />
+              <img src="/assets/Image/jurisdiction-map.png" class="card-img-top" alt="profile" />
 
               <div class="card-body ">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="/#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Jurisdiction</h5>
+                <p class="card-text">pune railways map</p>
+                <a href="https://www.mapsofindia.com/maps/maharashtra/railways/pune.htm" class="btn btn-primary">Go somewhere</a>
               </div>
             </div>
           </div>

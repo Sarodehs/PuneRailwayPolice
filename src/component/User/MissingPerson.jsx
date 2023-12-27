@@ -21,28 +21,38 @@ const MissingPersonsForm = ({ addMissingPerson }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addMissingPerson(formData);
-    setFormData({
-      fullName: '',
-      gender: '',
-      age: '',
-      dateOfBirth: '',
-      race: '',
-      distinguishingFeatures: '',
-      contactInfo: '',
-      additionalInfo: '',
-      status: '', // Reset the status field
-    });
+  
+    try {
+      const response = await fetch('http://localhost:5000/forms/missingPerson', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (response.ok) {
+        console.log('Missing person report submitted successfully!');
+        // Optionally, you can fetch the updated list of missing persons from the backend
+        // and update the state to reflect the latest data.
+      } else {
+        console.error('Failed to submit missing person report:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error submitting missing person report:', error.message);
+    }
   };
+  
 
   return (
-    <div className="container">
-      <div className="card">
-      <div className="row justify-content-center">
-        <div className="card-body"style={{backgroundColor:'lightgray'}}>
-          <h2 className="card-title fs-6 text-center">
+    <div className="container ">
+    <div className="">
+    <div className="row justify-content-center">
+      <div className="card-body bgcolortwo mt-5 p-5">
+        <h2 className="card-title  text-center">
+         
           <button className="btn btn-primary">Missing Persons Report Form</button>
           </h2>
           <form onSubmit={handleSubmit}>
@@ -184,9 +194,11 @@ const MissingPersonsForm = ({ addMissingPerson }) => {
                 rows="4"
               />
             </div>
-            <button type="submit" className="btn btn-primary">
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <button type="submit" className="btn btn-primary ">
               Submit
             </button>
+            </div>
           </form>
         </div>
       </div>
@@ -203,9 +215,9 @@ const MissingPersonsTable = ({ missingPersonsData }) => {
         <div className="card-body">
           <h2 className="card-title fs-4">Missing Persons Report</h2>
           <div className="table-responsive">
-            <table className="table table-bordered">
-              <thead>
-                <tr>
+           <table className="table table-striped">
+             <thead className="table-primary">
+                  <tr>
                   <th>Full Name</th>
                   <th>Gender</th>
                   <th>Age</th>
@@ -241,20 +253,29 @@ const MissingPersonsTable = ({ missingPersonsData }) => {
 };
 
 function MissingPerson() {
-  const [missingPersons, setMissingPersons] = useState(() => {
-    const storedMissingPersons = localStorage.getItem('missingPersons');
-    return storedMissingPersons ? JSON.parse(storedMissingPersons) : [];
-  });
+  const [missingPersons, setMissingPersons] = useState([]);
 
-  // Function to add a missing person to the list
   const addMissingPerson = (personData) => {
     setMissingPersons([...missingPersons, personData]);
   };
 
-  // Update localStorage whenever missingPersons changes
   useEffect(() => {
-    localStorage.setItem('missingPersons', JSON.stringify(missingPersons));
-  }, [missingPersons]);
+    const fetchMissingPersons = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/forms/missingPerson');
+        if (response.ok) {
+          const data = await response.json();
+          setMissingPersons(data);
+        } else {
+          console.error('Failed to fetch missing persons:', await response.json());
+        }
+      } catch (error) {
+        console.error('Error fetching missing persons:', error.message);
+      }
+    };
+
+    fetchMissingPersons();
+  }, []); // Run once when the component mounts
 
   return (
     <div>
@@ -267,3 +288,4 @@ function MissingPerson() {
 }
 
 export default MissingPerson;
+

@@ -111,9 +111,9 @@ const FeedbackEnquiry  = () => {
     <div className="container mt-5">
         <div className="row justify-content-center">
         <div className="col-md-9">
-        <div className="card">
+        <div className="bgcolortwo">
           <div className="card-body">
-              <div className="text-center mb-3">
+              <div className=" mb-3">
       <div className="text-center">
         <button className="btn btn-primary m-3" onClick={() => toggleInfo('Feedback')}>
           Feedback
@@ -222,16 +222,10 @@ const FeedbackEnquiry  = () => {
                     )}
                   </label>
                 </div> */}
-                <div id='recapcha'>
-              <ReCAPTCHA  sitekey="6LeEhachAAAAABxK2aBdHNR62PYq1GoUR_M0XUF1"/>
+               
+                <div className="form-group m-2"id='recapcha'>
+                <ReCAPTCHA  sitekey="6LeEhachAAAAABxK2aBdHNR62PYq1GoUR_M0XUF1"/>
                 </div>
-                {/* <div className="form-group">
-                  <ReCAPTCHA
-                    sitekey="6LdiED0oAAAAAHUxS3TrqFpIRV6bpspzVHAdljPX"
-                    onChange={handleRecaptchaChange}
-                  />
-                
-                </div> */}
                 <button type="send" className="btn btn-primary">
                   Submit
                 </button>

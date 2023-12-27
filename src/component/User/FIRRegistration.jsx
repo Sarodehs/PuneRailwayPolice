@@ -7,31 +7,23 @@ const FIRRegistration = () => {
     firNumber: '',
     registrationDateTime: '',
     complainantName: '',
-    contactNumber: '',
-    emailAddress: '',
     address: '',
     identificationDetails: '',
     incidentDateTime: '',
-    incidentLocation: '',
     incidentType: '',
     incidentDescription: '',
     offenderDetails: '',
     witnessName: '',
-    witnessContact: '',
-    witnessStatement: '',
     stolenPropertyDescription: '',
-    stolenPropertyEstimatedValue: '',
     injuredPersonName: '',
     injuredPersonAge: '',
     injuryExtent: '',
-    medicalTreatmentReceived: '',
     actionsTaken: '',
     arrestsMade: '',
     stolenPropertyRecovered: '',
     firStatus: '',
     additionalInformation: '',
     officerName: '',
-    officerBadgeNumber: '',
   });
 
   const handleInputChange = (event) => {
@@ -42,22 +34,38 @@ const FIRRegistration = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle form submission (e.g., send data to the server or perform actions).
-    console.log(firDetails);
+
+    try {
+      const response = await fetch('http://localhost:5000/forms/fir', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(firDetails),
+      });
+
+      if (response.ok) {
+        console.log('FIR submitted successfully!');
+      } else {
+        console.error('Failed to submit FIR:', await response.json());
+      }
+    } catch (error) {
+      console.error('Error submitting FIR:', error.message);
+    }
   };
 
   return (
     <div>
       <Header/>
-    <div className="container mt-5">
-      <div className="card">
-        <div className="card-body" style={{ backgroundColor: 'lightgray' }}>
-          <h2 className="card-title fs-6 text-center">
+      <div className="container mt-5 mb-5">
+      <div className="">
+        <div className="card-body bgcolortwo p-5" >
+          <h2 className="card-title fs-6 text-center ">
             <button className="btn btn-primary">FIR Registration</button>
           </h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} >
             {/* FIR Number & Date Time Of Registration */}
             <div className="row mb-3">
               <div className="col-md-6">
@@ -221,10 +229,11 @@ const FIRRegistration = () => {
                 </div>
               </div>
             </div>
-            
-            <button type="submit" className="btn btn-primary">
+            <div class="d-grid gap-2 col-6 mx-auto">
+            <button type="submit" className="btn btn-primary ">
               Submit
             </button>
+            </div>
           </form>
         </div>
       </div>

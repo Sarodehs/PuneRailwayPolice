@@ -1,10 +1,82 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import Header from './Header'
 import Footer from './Footer'
 
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 const Home = () => {
+
+  const [Spsmessage, setSpsmessage] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/spsMessage");
+        if (response.ok) {
+          const data = await response.json();
+          setSpsmessage(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
+
+
+  // get all
+  const [PositiveStory, setPositiveStory] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/positiveStories");
+        if (response.ok) {
+          const data = await response.json();
+          setPositiveStory(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
+
+// get all
+const [Headline, setHeadline] = useState([]);
+
+useEffect(() => {
+  // Define a function to fetch data
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/headlines");
+      if (response.ok) {
+        const data = await response.json();
+        setHeadline(data); // Update the state with the fetched data
+      } else {
+        console.error('Failed to fetch data');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Call the function when the component mounts
+  fetchData();
+}, []);
+
+
+
   return (
     <div>
       <Header />
@@ -92,61 +164,66 @@ const Home = () => {
             slidesToSlide={1}
             swipeable
           >
-            <div class="col m-2 ">
-              <div class="card mb-3">
-                <div class="row g-0 ">
+            {/* <div class="col m-2 "> */}
+            {PositiveStory.map((item) => (
+              <div class=" col m-2 mb-3">
+             
+                <div class="row  g-0 ">
+             
                   <div class="col-md-8">
-                    <div class="card-body bgcolorone">
-                      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    <div class="card-body h-100 p-4 bgcolorone">
+                      <p class="card-text"><small class="text-muted">{item.title}</small></p>
                     </div>
                   </div>
-                  <div class="col-md-4 bgcolorone">
-                    <a class="btn btn-primary " href="/photogallery" role="button">PDF</a>
-
+                   <div class="col-md-4 bgcolorone text-center ">
+                   {/* <button  className="btn btn-primary" href={`http://localhost:5000/${item.file}`} target="blank">PDF</button> */}
+                   <a href={`http://localhost:5000/${item.file}`} target="blank">
+                            
+                            {item.file && item.file.toLowerCase().endsWith('.pdf') ? (
+                              <i className="material-icons text-dark">picture_as_pdf</i>
+                            ) : (
+                              <i className="material-icons text-dark">insert_drive_file</i>
+                            )}
+                        
+                        </a>
                   </div>
+                   
                 </div>
+                 
               </div>
-            </div>
-            <div class="col  m-2">
-            <div class="card mb-3">
-            <div class="row g-0 ">
-                  <div class="col-md-8">
-                    <div class="card-body bgcolorone">
-                      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                    </div>
-                  </div>
-                  <div class="col-md-4 bgcolorone">
-                    <a class="btn btn-primary " href="/photogallery" role="button">PDF</a>
-
-                  </div>
-                </div>
-              </div>
-            </div>
+          ))}
+            {/* </div> */}
+         
           </Carousel>
 
           <div className="row ">
 
             <div className="col-xl-3 pt-3 ps-3 pe-3">
+            {Spsmessage.map((item, index) => (
               <div class="card pt-3" >
-                <img src="/assets/Image/policeofficer.png" class="card-img-top" alt="profile" />
+                <img key={item._id} src={`http://localhost:5000/${item.photo}`} alt={item._id} class="card-img-top"/>
+                {/* <img src="/assets/Image/policeofficer.png" class="card-img-top" alt="profile" /> */}
                 <div class="card-body">
-                  <h3>Dr. Shrikant Dhivare ( IPS )</h3>
-                  <h5>Superintendent of Police Pune Railway</h5>
+                  <h3>{item.name}</h3>
+                  <h5>{item.post}</h5>
                   <button class='btn btn-link'>Sadrakshanaya Khalanigrahanay</button>
                   <p class="card-text">"Help us make Railways Police Pune (GRP) passenger-friendly and effective. Stay vigilant, report suspicious activities, and together, we can create a safer railway environment."</p>
                   <b>I wish you Bon Voyage on your future journeys! Remember, if you see something, say something ...!!</b>
                 </div>
               </div>
+            ))}
             </div>
+
             <div className="col-xl-6 pt-3">
               <div className='bg-light card p-2'>
                 <div class="row row-cols-1 row-cols-md-4 pt-3  g-4">
                   <div class="col ">
                     <div class="card h-100ll text-center">
+                    <a href="/citizencorner"className='text-decoration-none text-dark'>
                       <img src="  /assets/Image/User.png" class="card-img-top ps-5 pe-5 pt-1" alt="card" />
                       <div class="card-body">
                         <h5 class="card-title">Citizen Service</h5>
-                      </div>
+                      </div></a>
                     </div>
                   </div>
                   <div class="col">
@@ -159,57 +236,70 @@ const Home = () => {
                   </div>
                   <div class="col">
                     <div class="card h-100 text-center">
+                    <a href="/policerecruitment"className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Insurance.png" class="card-img-top  ps-5 pe-5 pt-1" alt="card" />
                       <div class="card-body">
                         <h5 class="card-title">Recruitment</h5>
 
                       </div>
+                      </a>
                     </div>
                   </div>
                   <div class="col">
                     <div class="card h-100 text-center">
+                    <a href="/pressrelease"className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Writing.png" class="card-img-top ps-5 pe-5 pt-1" alt="card" />
                       <div class="card-body">
                         <h5 class="card-title">Press Release</h5>
 
                       </div>
+                      </a>
                     </div>
                   </div>
                 </div>
                 <div class="row row-cols-1 row-cols-md-4 pt-3 g-4">
                   <div class="col">
+                 
                     <div class="card h-100 text-center">
+                    <a href="/quicklinks"className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Link.png" class="card-img-top  ps-5 pe-5 pt-1" alt="card" />
                       <div class="card-body">
                         <h5 class="card-title">Useful Links</h5>
                       </div>
+                      </a>
                     </div>
                   </div>
                   <div class="col">
                     <div class="card h-100 text-center">
+                      <a href="/contactus"className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Phone.png" class="card-img-top  ps-5 pe-5 pt-1" alt="Card" />
                       <div class="card-body">
                         <h5 class="card-title">Contact Us</h5>
 
                       </div>
+                      </a>
                     </div>
                   </div>
                   <div class="col">
                     <div class="card h-100 text-center">
+                      <a href="https://www.railyatri.in/time-table" className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Google.png" class="card-img-top  ps-5 pe-5 pt-1" alt="Card" />
                       <div class="card-body">
                         <h5 class="card-title">Train Service</h5>
 
                       </div>
+                      </a>
                     </div>
                   </div>
                   <div class="col">
                     <div class="card h-100 text-center">
+                      <a href="https://indiarailinfo.com/atlas/sat?z=5&lat=12.97&lng=77.41" className='text-decoration-none text-dark'>
                       <img src="/assets/Image/Search.png" class="card-img-top  ps-5 pe-5 pt-1" alt="card" />
                       <div class="card-body">
                         <h5 class="card-title">Railway Map</h5>
 
                       </div>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -221,9 +311,11 @@ const Home = () => {
                           <img src="/assets/Image/Group1.png" class="img-fluid rounded-start pt-3 ps-2  w-75 " alt="card" />
                         </div>
                         <div class="col-md-8">
+                          <a href="https://www.maharashtra.gov.in/"className='text-decoration-none text-white'>
                           <div class="card-body">
                             <h5 class="card-title">Maharashtra Gov.</h5>
                           </div>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -235,9 +327,11 @@ const Home = () => {
                           <img src="/assets/Image/Group1.png" class="img-fluid rounded-start pt-3 ps-2  w-75 " alt="card" />
                         </div>
                         <div class="col-md-8">
+                          <a href="https://www.mahapolice.gov.in/" className='text-decoration-none text-white'>
                           <div class="card-body">
                             <h5 class="card-title">Maharashtra Police</h5>
                           </div>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -249,9 +343,11 @@ const Home = () => {
                           <img src="/assets/Image/Group1.png" class="img-fluid rounded-start pt-3 ps-2  w-75 " alt="card" />
                         </div>
                         <div class="col-md-8">
-                          <div class="card-body">
-                            <h5 class="card-title">Pune Police</h5>
+                          <a href="https://punepolice.gov.in/" className='text-decoration-none text-white'>
+                          <div class="card-body text-decoration-none">
+                            <h5 class="card-title  ">Pune Police</h5>
                           </div>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -409,7 +505,7 @@ const Home = () => {
                   max: 3000,
                   min: 1024
                 },
-                items: 3,
+                items: 2,
                 partialVisibilityGutter: 50
               },
               mobile: {
@@ -438,54 +534,20 @@ const Home = () => {
             slidesToSlide={1}
             swipeable
           >
-            <div class="card mb-3 ms-3 " >
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="/assets/Image/Link.png" class="img-fluid rounded-start" alt="..." />
-                </div>
-                <div class="col-md-8">
+              {Headline.map((item, index) => (
+               
+            <div class="  h-100  " >
+              <div class="row  g-0">
+               
+                <div class="col-md-10 text-center d-flex align-items-center">
                   <div class="card-body">
-                    <h5 class="card-title">Pune Police</h5>
+                    <h5 class="card-title">{item.title}</h5>
+                    <p>{item.createdAt}</p> 
                   </div>
                 </div>
               </div>
             </div>
-            <div class="card mb-3  ms-3" >
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="/assets/Image/Link.png" class="img-fluid rounded-start" alt="..." />
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title">Pune Police</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card mb-3  ms-3" >
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="/assets/Image/Link.png" class="img-fluid rounded-start" alt="..." />
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title">Pune Police</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="card mb-3  ms-3" >
-              <div class="row g-0">
-                <div class="col-md-4">
-                  <img src="/assets/Image/Link.png" class="img-fluid rounded-start" alt="..." />
-                </div>
-                <div class="col-md-8">
-                  <div class="card-body">
-                    <h5 class="card-title">Pune Police</h5>
-                  </div>
-                </div>
-              </div>
-            </div>
+              ))}
           </Carousel>
           </div>
           {/* carousel end */}

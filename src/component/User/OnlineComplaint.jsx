@@ -15,36 +15,64 @@ const OnlineComplaint = () => {
   const [witnessStatement, setWitnessStatement] = useState('');
   const [evidence, setEvidence] = useState(null);
 
-  const handleSubmit = (e) => {
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform form validation and submission logic here
-    // You can send the form data to the server or perform client-side validation
-    // Reset form fields after submission
-    // setFullName('');
-    // setContactNumber('');
-    // setEmail('');
-    // setDateTime('');
-    // setLocation('');
-    // setIncidentType('');
-    // setDescription('');
-    // setWitnessName('');
-    // setWitnessContact('');
-    // setWitnessStatement('');
-    // setEvidence(null);
-  };
 
+    const formData = new FormData();
+    formData.append('fullName', fullName);
+    formData.append('contactNumber', contactNumber);
+    formData.append('email', email);
+    formData.append('dateTime', dateTime);
+    formData.append('location', location);
+    formData.append('incidentType', incidentType);
+    formData.append('description', description);
+    formData.append('witnessName', witnessName);
+    formData.append('witnessContact', witnessContact);
+    formData.append('witnessStatement', witnessStatement);
+    formData.append('evidence', evidence);
+
+    try {
+      const response = await fetch('http://localhost:5000/forms/onlineComplaint', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log('Online Complaint submitted successfully!');
+        window.alert('Online Complaint submitted successfully!')
+        // Reset form fields after submission
+        setFullName('');
+        setContactNumber('');
+        setEmail('');
+        setDateTime('');
+        setLocation('');
+        setIncidentType('');
+        setDescription('');
+        setWitnessName('');
+        setWitnessContact('');
+        setWitnessStatement('');
+        setEvidence(null);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to submit Online Complaint:', errorData);
+      }
+    } catch (error) {
+      console.error('Error submitting Online Complaint:', error.message);
+    }
+  };
   return (
     <>
     <Header/>
     <div className="container">
-      <div className="card">
-        <div className="card-body" style={{ backgroundColor: '#f3f3f3' }}>
+      <div className="bgcolortwo mt-4 mb-4 p-5">
+        <div className="card-body" >
           <div className="text-center">
-            <h5 className="card-title">Online Complaint Form</h5>
+                 <h5 className="card-title">Online Complaint Form</h5>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="form-row">
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="fullName">Full Name:</label>
                 <input
                   type="text"
@@ -55,7 +83,7 @@ const OnlineComplaint = () => {
                   required
                 />
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="contactNumber">Contact Number:</label>
                 <input
                   type="tel"
@@ -68,7 +96,7 @@ const OnlineComplaint = () => {
               </div>
             </div>
             <div className="form-row">
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="email">Email:</label>
                 <input
                   type="email"
@@ -79,7 +107,7 @@ const OnlineComplaint = () => {
                   required
                 />
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="dateTime">Date and Time of Incident:</label>
                 <input
                   type="datetime-local"
@@ -92,7 +120,7 @@ const OnlineComplaint = () => {
               </div>
             </div>
             <div className="form-row">
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="location">Location:</label>
                 <input
                   type="text"
@@ -103,7 +131,7 @@ const OnlineComplaint = () => {
                   required
                 />
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="incidentType">Incident Type:</label>
                 <input
                   type="text"
@@ -130,7 +158,7 @@ const OnlineComplaint = () => {
               <input
                 type="file"
                 id="evidence"
-                accept="image/*, video/*, application/pdf"
+                accept="image/, video/, application/pdf"
                 onChange={(e) => setEvidence(e.target.files[0])}
                 className="form-control-file"
               />
@@ -146,7 +174,7 @@ const OnlineComplaint = () => {
               />
             </div>
             <div className="form-row">
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="witnessContact">Witness Contact:</label>
                 <input
                   type="tel"
@@ -156,7 +184,7 @@ const OnlineComplaint = () => {
                   className="form-control"
                 />
               </div>
-              <div className="form-group col-md-6">
+              <div className="form-group ">
                 <label htmlFor="witnessStatement">Witness Statement:</label>
                 <textarea
                   id="witnessStatement"
@@ -166,10 +194,10 @@ const OnlineComplaint = () => {
                 />
               </div>
             </div>
-            <div className="form-group text-center">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
+            <div class="d-grid gap-2 col-6 mx-auto mt-5">
+            <button type="submit" className="btn btn-primary ">
+              Submit
+            </button>
             </div>
           </form>
         </div>

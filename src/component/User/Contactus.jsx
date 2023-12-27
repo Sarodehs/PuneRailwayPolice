@@ -33,26 +33,29 @@ const Contactus = () => {
     <div> <div>
       <Header />
       <div>
-        <div class="row p-5">
+      <div class="row p-5 bg-light">
+          <h2 className='text-center'>Location & Jurisdiction Map</h2>
           <div class="col-sm-5 offset-1">
             <div class="card">
-              <img src="/assets/Image/image1.png" class="card-img-top" alt="profile" />
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7566.013672944764!2d73.8741151!3d18.5285932!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c123e61be033%3A0x4cb43d9aabd553c9!2sPune%20Railway%20Police%20Station!5e0!3m2!1sen!2sin!4v1702553301075!5m2!1sen!2sin"
+         width="600" height="400" style={{border:0}} class="card-img-top" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+     
 
-              <div class="card-body bgcolorone">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="/#" class="btn btn-primary">Go somewhere</a>
+              <div class="card-body ">
+                <h5 class="card-title">Location</h5>
+                <p class="card-text">GVHG+G2C, Station Rd, Agarkar Nagar, Pune, Maharashtra 411001</p>
+                <a href="https://www.google.com/maps/place/Pune+Railway+Police+Station/@18.5285932,73.8741151,16z/data=!4m6!3m5!1s0x3bc2c123e61be033:0x4cb43d9aabd553c9!8m2!3d18.5288233!4d73.8750283!16s%2Fg%2F11gj0zwfcs?hl=en&entry=ttu" class="btn btn-primary">Go somewhere</a>
               </div>
             </div>
           </div>
           <div class="col-sm-5 ">
             <div class="card ">
-              <img src="/assets/Image/image1.png" class="card-img-top" alt="profile" />
+              <img src="/assets/Image/jurisdiction-map.png" class="card-img-top" alt="profile" />
 
-              <div class="card-body bgcolorone">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="/#" class="btn btn-primary">Go somewhere</a>
+              <div class="card-body ">
+                <h5 class="card-title">Jurisdiction</h5>
+                <p class="card-text">pune railways map</p>
+                <a href="https://www.mapsofindia.com/maps/maharashtra/railways/pune.htm" class="btn btn-primary">Go somewhere</a>
               </div>
             </div>
           </div>

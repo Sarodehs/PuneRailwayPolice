@@ -224,7 +224,7 @@ const BeyondCallOfDuty = () => {
       <div class="card-body bgcolorone">
         <h5 class="card-title">Facebook</h5>
         <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-        <a href="/https://www.facebook.com/punerailwaypolice" class="btn btn-primary">Go facebook</a>
+        <a href="/https://www.facebook.com/" class="btn btn-primary">Go facebook</a>
       </div>
     </div>
   </div>
@@ -235,7 +235,7 @@ const BeyondCallOfDuty = () => {
       <div class="card-body bgcolorone">
         <h5 class="card-title">twitter</h5>
         <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-        <a href="/https://twitter.com/RailwayPune" class="btn btn-primary">Go twitter</a>
+        <a href="/https://twitter.com/" class="btn btn-primary">Go twitter</a>
       </div>
     </div>
   </div>

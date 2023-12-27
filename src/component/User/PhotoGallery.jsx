@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { TaggedContentCard } from 'react-ui-cards';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
@@ -7,6 +7,29 @@ import Footer from './Footer';
 
 
 const PhotoGallery = () => {
+  const [AddAlbumName, setAddAlbumName] = useState([]);
+
+  useEffect(() => {
+    // Define a function to fetch data
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/addAlbumName");
+        if (response.ok) {
+          const data = await response.json();
+          setAddAlbumName(data); // Update the state with the fetched data
+        } else {
+          console.error('Failed to fetch data');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    // Call the function when the component mounts
+    fetchData();
+  }, []);
+
+
   return (
 <div>
       <div>
@@ -70,12 +93,13 @@ const PhotoGallery = () => {
             slidesToSlide={1}
             swipeable
           >
+            {AddAlbumName.map((item, index) => (
             <div className='m-1'>
               <TaggedContentCard
                 href='https://punerailwaypolice.gov.in/'
-                thumbnail='/assets/Image/Album/1.png'
-                title='पेट्रोल पंप भूमीपूजन समारंभ'
-                description='PUNE'
+                thumbnail={`http://localhost:5000/${item.albumCoverPhoto}`}
+                title={item.albumNameInEnglish}
+                description={item.createdAt}
                 tags={[
                   // 'food',
                   // 'cake',
@@ -83,45 +107,7 @@ const PhotoGallery = () => {
                 ]}
               />
             </div>
-            <div className='m-1'>
-              <TaggedContentCard
-                href='https://punerailwaypolice.gov.in/'
-                thumbnail='/assets/Image/Album/1.png'
-                title='Yoga Day 2019'
-                description='PUNE'
-                tags={[
-                  // 'food',
-                  // 'cake',
-                  // 'fruits'
-                ]}
-              />
-            </div>
-            <div className='m-1'>
-              <TaggedContentCard
-                href='https://punerailwaypolice.gov.in/'
-                thumbnail='/assets/Image/Album/6.png'
-                title='World Drugs Day 26th Jun 2019'
-                description='PUNE'
-                tags={[
-                  // 'food',
-                  // 'cake',
-                  // 'fruits'
-                ]}
-              />
-            </div>
-            <div className='m-1'>
-              <TaggedContentCard
-                href='https://punerailwaypolice.gov.in/'
-                thumbnail='/assets/Image/Album/7.png'
-                title='In Service career development training for police man'
-                description='PUNE'
-                tags={[
-                  // 'food',
-                  // 'cake',
-                  // 'fruits'
-                ]}
-              />
-            </div>
+            ))}
           </Carousel>
           {/* carousel end */}
         </div>

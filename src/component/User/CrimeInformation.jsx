@@ -74,7 +74,7 @@ const CrimeInformation = () => {
  <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-8">
-          <div className="card my-4">
+          <div className="bgcolortwo my-4 p-5">
             <div className="card-body">
               <h1 className="card-title fs-4 text-center">Accidental Deaths Search</h1>
               <form onSubmit={handleSearch}>
