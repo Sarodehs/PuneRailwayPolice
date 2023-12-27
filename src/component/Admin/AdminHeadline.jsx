@@ -14,7 +14,7 @@ const AdminHeadline = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/headline");
+        const response = await fetch("http://localhost:5000/headlines");
         if (response.ok) {
           const data = await response.json();
           setHeadline(data); // Update the state with the fetched data
@@ -48,7 +48,7 @@ const AdminHeadline = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/headline/${id}`, {
+      const response = await fetch(`http://localhost:5000/headlines/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -95,6 +95,12 @@ const AdminHeadline = () => {
   const slicedHeadline = Headline.slice(startIndex, endIndex);
 
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
   return (
@@ -141,18 +147,15 @@ const AdminHeadline = () => {
                     <a href="/adminheadlineform" className="btn btn-primary"><i className="fa-light fa-plus"></i> Add New</a>
                   </div>
                 </form>
-                <div className="card-body">
+                <div className="card-body admintablesroll">
                   <table className="table table-striped">
                     <thead className='table-primary'>
                       <tr> 
                         <th scope="col">Sr No.</th>
                         <th scope="col">Title</th>
                         <th scope="col">Title in Marathi</th>
-                        <th scope="col">Link</th>
-                        <th scope="col">file</th>
                         <th scope="col">Priority</th>
                         <th scope="col">Created At</th>
-                        <th scope="col">Updated At</th>
                         <th scope="col">View</th>
                         <th scope="col-xl-1 col-md-1 col-sm-1" colspan="2">Actions</th>
                       </tr>
@@ -163,15 +166,12 @@ const AdminHeadline = () => {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.title}</td>
-                          <td>{item.titleinmarathi}</td>
-                          <td>{item.link}</td>
-                          <td>{item.file}</td>
+                          <td>{item.titleInMarathi}</td>
                           <td>{item.priority}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.createdAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                         <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -200,6 +200,31 @@ const AdminHeadline = () => {
                       </li>
                     </ul>
                   </nav>
+
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">Headline </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.title}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                 </div>
               </div>

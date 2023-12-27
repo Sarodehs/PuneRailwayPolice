@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import Sidenav from './Sidenav'
 import Topnav from './Topnav'
 
@@ -8,29 +8,37 @@ const AdminCompassionListForm = () => {
   const location = useLocation();
   const { compassionlistToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+    title:'',
+    titleInMarathi:'',
+    date:'',
+    file:null,
+    createdAt:'',
+    updatedAt:'',
   });
 
   useEffect(() => {
     if (compassionlistToUpdate) {
       setFormData({
-        name: compassionlistToUpdate.name || '',
-        nameinmarathi: compassionlistToUpdate.nameinmarathi || '',
-        message: compassionlistToUpdate.message || '',
-        FromDate: compassionlistToUpdate.FromDate || '',
-        ToDate: compassionlistToUpdate.ToDate || '',
+        title: compassionlistToUpdate.title || '',
+        titleInMarathi: compassionlistToUpdate.titleInMarathi || '',
+        date: compassionlistToUpdate.date || '',
+        file: compassionlistToUpdate.file || '',
+        createdAt: compassionlistToUpdate.createdAt || '',
+        updatedAt: compassionlistToUpdate.updatedAt || '',
       });
     }
   }, [compassionlistToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, file: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -40,7 +48,18 @@ const AdminCompassionListForm = () => {
       let url;
       let method;
       let action;
+     
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('titleInMarathi', formData.titleInMarathi);
+      formDataToSend.append('date', formData.date);
+      formDataToSend.append('createdAt', formData.createdAt);
+      formDataToSend.append('updatedAt', formData.updatedAt);
 
+      // Append file only if it exists
+      if (formData.file) {
+        formDataToSend.append('pdf', formData.file);
+      }
       if (compassionlistToUpdate) {
         // If compassionlistToUpdate exists, perform an update (PUT request)
         url = `http://localhost:5000/compassionlist/${compassionlistToUpdate._id}`;
@@ -55,10 +74,7 @@ const AdminCompassionListForm = () => {
 
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (response.ok) {
@@ -103,62 +119,76 @@ const AdminCompassionListForm = () => {
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="title" className="form-label">Title</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="title"
+                      name="title"
+                      value={formData.title}
                       onChange={handleInputChange}
                     />
                   </div>
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="titleInMarathi" className="form-label">Title in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="titleInMarathi"
+                      name="titleInMarathi"
+                      value={formData.titleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="date" className="form-label">Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="file" className="form-label">
+                      File
+                    </label>
                     <input
                       type="file"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="file"
+                      name="file"
+                      ref={fileInputRef}
+                      accept=".pdf"
                       onChange={handleInputChange}
-
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />
@@ -166,7 +196,6 @@ const AdminCompassionListForm = () => {
 
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>
-
 
 
               </div>

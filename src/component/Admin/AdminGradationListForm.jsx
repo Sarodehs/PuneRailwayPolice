@@ -1,38 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminGradationListForm = () => {
 
+const AdminGradationListForm = () => {
   const location = useLocation();
   const { gradationListToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
-    title:'',
-   titleInMarathi:'',
-   date:'',
-   file:'',
-   CreatedAt:'',
-   UpdatedAt:'',
+    title: '',
+    titleInMarathi: '',
+    date: '',
+    file: null,
+    createdAt: '',
+    updatedAt: '',
   });
 
   useEffect(() => {
     if (gradationListToUpdate) {
       setFormData({
         title: gradationListToUpdate.title || '',
-        titleInMarathi : gradationListToUpdate.titleInMarathi || '',
+        titleInMarathi: gradationListToUpdate.titleInMarathi || '',
         date: gradationListToUpdate.date || '',
-        file: gradationListToUpdate.file || '',
-        CreatedAt: gradationListToUpdate.CreatedAt || '',
-        UpdatedAt: gradationListToUpdate.UpdatedAt || '',
+        file: gradationListToUpdate.file || null,
+        createdAt: gradationListToUpdate.createdAt || '',
+        updatedAt: gradationListToUpdate.updatedAt || '',
       });
     }
   }, [gradationListToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, file: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -43,6 +49,16 @@ const AdminGradationListForm = () => {
       let method;
       let action;
 
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('titleInMarathi', formData.titleInMarathi);
+      formDataToSend.append('date', formData.date);
+      formDataToSend.append('createdAt', formData.createdAt);
+      formDataToSend.append('updatedAt', formData.updatedAt);
+  // Append file only if it exists
+  if (formData.file) {
+    formDataToSend.append('pdf', formData.file);
+  }
       if (gradationListToUpdate) {
         // If gradationListToUpdate exists, perform an update (PUT request)
         url = `http://localhost:5000/gradationlist/${gradationListToUpdate._id}`;
@@ -57,28 +73,22 @@ const AdminGradationListForm = () => {
 
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/admingradationlist')
+        navigate('/admingradationlist');
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
-
       }
     } catch (error) {
       console.error('Error:', error.message);
-      window.alert('Error:', error.message);
+      window.alert(`Error: ${error.message}`);
     }
   };
-
-
   return (
     <div>
       <div className="">
@@ -148,31 +158,32 @@ const AdminGradationListForm = () => {
                       className="form-control"
                       id="file"
                       name="file"
-                      value={formData.file} 
+                      ref={fileInputRef}
+                      accept=".pdf"
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="CreatedAt" className="form-label">Created At</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="CreatedAt"
-                      name="CreatedAt"
-                      value={formData.CreatedAt}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="UpdatedAt" className="form-label">Updated At</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="UpdatedAt"
-                      name="UpdatedAt"
-                      value={formData.UpdatedAt}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />

@@ -9,21 +9,20 @@ const AdminContactOfficerDivisionForm = () => {
   const { contactofficerdivisionToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+   divisionTitle:'',
+   divisionTitleInMarathi:'',
+   createdAt:'',
+   updatedAt:'',
   });
+
 
   useEffect(() => {
     if (contactofficerdivisionToUpdate) {
       setFormData({
-        name: contactofficerdivisionToUpdate.name || '',
-        nameinmarathi: contactofficerdivisionToUpdate.nameinmarathi || '',
-        message: contactofficerdivisionToUpdate.message || '',
-        FromDate: contactofficerdivisionToUpdate.FromDate || '',
-        ToDate: contactofficerdivisionToUpdate.ToDate || '',
+        divisionTitle: contactofficerdivisionToUpdate.divisionTitle || '',
+        divisionTitleInMarathi: contactofficerdivisionToUpdate.divisionTitleInMarathi || '',
+        CreatedAt: contactofficerdivisionToUpdate.createdAt || '',
+        UpdatedAt: contactofficerdivisionToUpdate.updatedAt || '',
       });
     }
   }, [contactofficerdivisionToUpdate]);
@@ -43,12 +42,12 @@ const AdminContactOfficerDivisionForm = () => {
 
       if (contactofficerdivisionToUpdate) {
         // If contactofficerdivisionToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/contactofficerdivision/${contactofficerdivisionToUpdate._id}`;
+        url = `http://localhost:5000/contactOfficerDivision/${contactofficerdivisionToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If contactofficerdivisionToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/contactofficerdivision';
+        url = 'http://localhost:5000/contactOfficerDivision';
         method = 'POST';
         action = 'created';
       }
@@ -64,7 +63,7 @@ const AdminContactOfficerDivisionForm = () => {
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/admincontactofficerdivision')
+        navigate('/admincontactofficedivision')
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
@@ -96,84 +95,66 @@ const AdminContactOfficerDivisionForm = () => {
 
             <div className="row p-3 ">
               <div className="col-xl-12 bg-light rounded">
-              <a href="/admincontactofficerdivision" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
+              <a href="/admincontactofficedivision" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
                   ContactOfficerDivision</h3>
                   </a>
                 <hr />
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="divisionTitle" className="form-label">Division Title</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="divisionTitle"
+                      name="divisionTitle"
+                      value={formData.divisionTitle}
                       onChange={handleInputChange}
                     />
                   </div>
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="divisionTitleInMarathi" className="form-label">Division in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="divisionTitleInMarathi"
+                      name="divisionTitleInMarathi"
+                      value={formData.divisionTitleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
-                      type="file"
+                      type="date"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
 
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt} 
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
+                  
 
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>
-
-
-
               </div>
-
-
-
-
             </div>
 
             {/* <!-- Content area start --> */}

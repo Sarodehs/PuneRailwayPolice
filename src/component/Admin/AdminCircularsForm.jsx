@@ -1,39 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
-
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminCircularsForm = () => {
 
+const AdminCircularsForm = () => {
   const location = useLocation();
   const { circularsToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
-  title:'',
-                        titleinmarathi:'',
-                        Date:'',
-                        File:'',
-                        CreatedAt:'',
-                        UpdatedAt:'',
+    title: '',
+    titleInMarathi: '',
+    date: '',
+    file: null,
+    createdAt: '',
+    updatedAt: '',
   });
 
   useEffect(() => {
     if (circularsToUpdate) {
       setFormData({
         title: circularsToUpdate.title || '',
-        titleinmarathi: circularsToUpdate.titleinmarathi || '',
-        Date: circularsToUpdate.Date || '',
-        File: circularsToUpdate.File || '',
-        CreatedAt: circularsToUpdate.CreatedAt || '',
-        UpdatedAt: circularsToUpdate.UpdatedAt || '',
-
+        titleInMarathi: circularsToUpdate.titleInMarathi || '',
+        date: circularsToUpdate.date || '',
+        file: circularsToUpdate.file || null,
+        createdAt: circularsToUpdate.createdAt || '',
+        updatedAt: circularsToUpdate.updatedAt || '',
       });
     }
   }, [circularsToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, file: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -45,68 +50,74 @@ const AdminCircularsForm = () => {
       let action;
 
       if (circularsToUpdate) {
-        // If circularsToUpdate exists, perform an update (PUT request)
         url = `http://localhost:5000/circulars/${circularsToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
-        // If circularsToUpdate doesn't exist, create a new entry (POST request)
         url = 'http://localhost:5000/circulars';
         method = 'POST';
         action = 'created';
       }
 
+      const formDataForUpload = new FormData();
+      formDataForUpload.append('title', formData.title);
+      formDataForUpload.append('titleInMarathi', formData.titleInMarathi);
+      formDataForUpload.append('date', formData.date);
+      formDataForUpload.append('pdf', formData.file);
+      formDataForUpload.append('createdAt', formData.createdAt);
+      formDataForUpload.append('updatedAt', formData.updatedAt);
+
+      console.log('Request Payload:', formDataForUpload);
+
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataForUpload,
+        // Add headers if needed, especially for handling file uploads
       });
 
-      if (response.ok) {
-        console.log(`Data ${action} successfully`);
-        window.alert(`Data ${action} successfully`);
-        navigate('/admincirculars')
-      } else {
-        const errorData = await response.json();
-        throw new Error(`${response.status} - ${errorData.message}`);
-
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Server Error:', errorText);
+        throw new Error(`${response.status} - ${errorText}`);
       }
+
+      const responseData = await response.json();
+      console.log('Response Data:', responseData);
+
+      window.alert(`Data ${action} successfully`);
+      navigate('/admincirculars');
     } catch (error) {
       console.error('Error:', error.message);
-      window.alert('Error:', error.message);
+      window.alert(`Error: ${error.message}`);
     }
   };
-
 
   return (
     <div>
       <div className="">
-        {/* <Topnav/> */}
         <div className="row">
-          {/* <!-- side nav start --> */}
-          <div className="col-md-2 col-xl-2 col-sm-2 " >
+          <div className="col-md-2 col-xl-2 col-sm-2 ">
             <Sidenav />
           </div>
-          {/* <!-- side nav end --> */}
-
-          {/* <!-- Content area start --> */}
-          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0" >
-            {/* Topnav start*/}
+          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0">
             <Topnav />
-            {/* topnav end*/}
-
             <div className="row p-3 ">
               <div className="col-xl-12 bg-light rounded">
-              <a href="/admincirculars" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
-              Circulars</h3>
-                  </a>
+                <a href="/admincirculars" className="text-decoration-none text-dark">
+                  {' '}
+                  <h3 className="m-3">
+                    {' '}
+                    <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
+                    Circulars
+                  </h3>
+                </a>
                 <hr />
-               
+
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="title" className="form-label">Title</label>
+                    <label htmlFor="title" className="form-label">
+                      Title
+                    </label>
                     <input
                       type="text"
                       className="form-control"
@@ -117,87 +128,86 @@ const AdminCircularsForm = () => {
                     />
                   </div>
 
-
                   <div className="mb-3">
-                    <label htmlFor="titleinmarathi" className="form-label">Title In Marathi</label>
+                    <label htmlFor="titleInMarathi" className="form-label">
+                      Title In Marathi
+                    </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="titleinmarathi"
-                      name="titleinmarathi"
-                      value={formData.titleinmarathi}
+                      id="titleInMarathi"
+                      name="titleInMarathi"
+                      value={formData.titleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="Date" className="form-label">Date</label>
+                    <label htmlFor="date" className="form-label">
+                      Date
+                    </label>
                     <input
                       type="date"
                       className="form-control"
-                      id="Date"
-                      name="Date"
-                      value={formData.Date}
+                      id="date"
+                      name="date"
+                      value={formData.date}
                       onChange={handleInputChange}
-
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="File" className="form-label">File</label>
+                    <label htmlFor="file" className="form-label">
+                      File
+                    </label>
                     <input
                       type="file"
                       className="form-control"
-                      id="File"
-                      name="File"
-                      value={formData.File} 
+                      id="file"
+                      name="file"
+                      ref={fileInputRef}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="CreatedAt" className="form-label">Created At</label>
+                    <label htmlFor="createdAt" className="form-label">
+                      Created At
+                    </label>
                     <input
                       type="date"
                       className="form-control"
-                      id="CreatedAt"
-                      name="CreatedAt"
-                      value={formData.CreatedAt}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="UpdatedAt" className="form-label">Updated At</label>
+                    <label htmlFor="updatedAt" className="form-label">
+                      Updated At
+                    </label>
                     <input
                       type="date"
                       className="form-control"
-                      id="UpdatedAt"
-                      name="UpdatedAt"
-                      value={formData.UpdatedAt}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  <button type="submit" className="btn btn-primary">Save Changes</button>
+                  <button type="submit" className="btn btn-primary">
+                    Save Changes
+                  </button>
                 </form>
-
-
-
               </div>
-
-
-
-
             </div>
-
-            {/* <!-- Content area start --> */}
           </div>
-          {/* <Footer /> */}
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminCircularsForm
+export default AdminCircularsForm;

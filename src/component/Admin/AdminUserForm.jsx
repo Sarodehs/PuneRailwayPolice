@@ -9,21 +9,24 @@ const AdminUserForm = () => {
   const { userToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+    name:'',
+    username:'',
+    password:'',
+    userLevel:'',
+    createdAt:'',
+    // UpdatedAt:'',
   });
 
   useEffect(() => {
     if (userToUpdate) {
       setFormData({
         name: userToUpdate.name || '',
-        nameinmarathi: userToUpdate.nameinmarathi || '',
-        message: userToUpdate.message || '',
-        FromDate: userToUpdate.FromDate || '',
-        ToDate: userToUpdate.ToDate || '',
+        username: userToUpdate.username || '',
+        password: userToUpdate.password || '',
+        userLevel: userToUpdate.userLevel || '',
+        createdAt: userToUpdate.createdAt || '',
+        // UpdatedAt: userToUpdate.UpdatedAt || '',
+
       });
     }
   }, [userToUpdate]);
@@ -43,12 +46,12 @@ const AdminUserForm = () => {
 
       if (userToUpdate) {
         // If userToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/user/${userToUpdate._id}`;
+        url = `http://localhost:5000/users/${userToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If userToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/user';
+        url = 'http://localhost:5000/users';
         method = 'POST';
         action = 'created';
       }
@@ -116,49 +119,51 @@ const AdminUserForm = () => {
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="username" className="form-label">User Name</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="username"
+                      name="username"
+                      value={formData.username}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
+
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="password" className="form-label">Password</label>
                     <input
-                      type="file"
+                      type="password"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="password"
+                      name="password"
+                      value={formData.password}
                       onChange={handleInputChange}
 
                     />
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                 <div className="mb-3">
+                    <label htmlFor="userLevel" className="form-label">User Name</label>
                     <input
-                      type="date"
+                      type="text"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="userLevel"
+                      name="userLevel"
+                      value={formData.userLevel}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
+
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="createdAt" className="form-label">CreatedAt</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />

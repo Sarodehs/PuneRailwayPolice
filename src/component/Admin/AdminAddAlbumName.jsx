@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Sidenav from './Sidenav'
 import Topnav from './Topnav'
 
-
 const AdminAddAlbumName = () => {
-
 
   // get all
   const [AddAlbumName, setAddAlbumName] = useState([]);
@@ -14,7 +12,7 @@ const AdminAddAlbumName = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/addPhotosToAlbum");
+        const response = await fetch("http://localhost:5000/addAlbumName");
         if (response.ok) {
           const data = await response.json();
           setAddAlbumName(data); // Update the state with the fetched data
@@ -48,7 +46,7 @@ const AdminAddAlbumName = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/addPhotosToAlbum/${id}`, {
+      const response = await fetch(`http://localhost:5000/addAlbumName/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -96,6 +94,12 @@ const AdminAddAlbumName = () => {
 
 
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
   return (
     <div>   <div className="">
@@ -141,7 +145,7 @@ const AdminAddAlbumName = () => {
                     <a href="/adminaddalbumnameform" className="btn btn-primary"><i className="fa-light fa-plus"></i> Add New</a>
                   </div>
                 </form>
-                <div className="card-body">
+                <div className="card-body admintablesroll">
                   <table className="table table-striped">
                     <thead className='table-primary'>
                       <tr>
@@ -164,12 +168,12 @@ const AdminAddAlbumName = () => {
                           <td>{item.albumNameInEnglish}</td>
                           <td>{item.albumNameInMarathi}</td>
                           <td>{item.priority}</td>
-                          <td>{item.albumCoverPhoto}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
-
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          {/* <td>{item.albumCoverPhoto}</td> */}
+                          <td><img key={item._id} src={`http://localhost:5000/${item.albumCoverPhoto}`} alt="albumCoverPhoto" className="img-fluid w-25"/></td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                           <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -198,7 +202,30 @@ const AdminAddAlbumName = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">Add Album Name</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.albumNameInEnglish}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

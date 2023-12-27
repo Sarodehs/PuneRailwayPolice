@@ -9,38 +9,57 @@ const AdminTenderForm = () => {
   const { tenderToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+  title:'',
+  titleInMarathi:'',
+  uploadDate:'',
+  lastDateOfSubmission:'',
+  file:'',
+  createdAt:'',
+  updatedAt:'',
   });
 
   useEffect(() => {
     if (tenderToUpdate) {
       setFormData({
-        name: tenderToUpdate.name || '',
-        nameinmarathi: tenderToUpdate.nameinmarathi || '',
-        message: tenderToUpdate.message || '',
-        FromDate: tenderToUpdate.FromDate || '',
-        ToDate: tenderToUpdate.ToDate || '',
+        title: tenderToUpdate.title || '',
+        titleInMarathi: tenderToUpdate.titleInMarathi || '',
+        uploadDate: tenderToUpdate.uploadDate || '',
+        lastDateOfSubmission: tenderToUpdate.lastDateOfSubmission || '',
+        file: tenderToUpdate.file || '',
+        createdAt: tenderToUpdate.createdAt || '',
+        updatedAt: tenderToUpdate.updatedAt || '',
       });
     }
   }, [tenderToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const { name, value, type } = e.target;
 
+    if (type === 'file') {
+        // Handle file input differently for edit
+        const updatedFormData = { ...formData };
+        if (e.target.files.length > 0) {
+            updatedFormData['pdf'] = e.target.files[0];
+        } else {
+            delete updatedFormData['pdf'];
+        }
+        setFormData(updatedFormData);
+        
+    } else {
+        // Handle other inputs
+        setFormData({ ...formData, [name]: value });
+    }
+};
+  
+  
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       let url;
       let method;
       let action;
-
+  
       if (tenderToUpdate) {
         // If tenderToUpdate exists, perform an update (PUT request)
         url = `http://localhost:5000/tender/${tenderToUpdate._id}`;
@@ -52,31 +71,40 @@ const AdminTenderForm = () => {
         method = 'POST';
         action = 'created';
       }
+  
+      const formDataWithFile = new FormData();
+      
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'pdf' && value instanceof File) {  // Change this to 'pdf'
+            formDataWithFile.append(key, value);
+        } else if (value !== undefined) {
+            formDataWithFile.append(key, value);
+        }
+    });
+  
+      
+    console.log('Request Payload:', Object.fromEntries(formDataWithFile.entries()));
 
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataWithFile,
       });
-
+  
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/admintender')
+        navigate('/admintender');
       } else {
-        const errorData = await response.json();
-        throw new Error(`${response.status} - ${errorData.message}`);
-
+        const errorText = await response.text();
+        console.error('Error:', response.status, errorText); // Log status code and response text
+        window.alert(`Error: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error('Error:', error.message);
-      window.alert('Error:', error.message);
+      window.alert(`Error: ${error.message}`);
     }
   };
-
-
+  
   return (
     <div>
       <div className="">
@@ -103,62 +131,88 @@ const AdminTenderForm = () => {
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="title" className="form-label">Title</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="title"
+                      name="title"
+                      value={formData.title}
                       onChange={handleInputChange}
                     />
                   </div>
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="titleInMarathi" className="form-label">Title In Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="titleInMarathi"
+                      name="titleInMarathi"
+                      value={formData.titleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="uploadDate" className="form-label">Upload Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="uploadDate"
+                      name="uploadDate"
+                      value={formData.uploadDate}
+                      onChange={handleInputChange}
+
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="lastDateOfSubmission" className="form-label">Last Date</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="lastDateOfSubmission"
+                      name="lastDateOfSubmission"
+                      value={formData.lastDateOfSubmission} 
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="file" className="form-label">
+                      File
+                    </label>
                     <input
                       type="file"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="file"
+                      name="file"
+                   
+                      accept=".pdf"
                       onChange={handleInputChange}
-
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="updatedAt" className="form-label">UpdatedAt</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />

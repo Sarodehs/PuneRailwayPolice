@@ -9,21 +9,20 @@ const AdminWomenCityTypesForm = () => {
   const { womencitytypesToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+    cityTitle: '',
+   cityTitleInMarathi: '',
+   createdAt:'',
+   updatedAt:'',
   });
 
   useEffect(() => {
     if (womencitytypesToUpdate) {
       setFormData({
-        name: womencitytypesToUpdate.name || '',
-        nameinmarathi: womencitytypesToUpdate.nameinmarathi || '',
-        message: womencitytypesToUpdate.message || '',
-        FromDate: womencitytypesToUpdate.FromDate || '',
-        ToDate: womencitytypesToUpdate.ToDate || '',
+        cityTitle: womencitytypesToUpdate.cityTitle || '',
+       cityTitleInMarathi: womencitytypesToUpdate.nameinmarathi || '',
+        createdAt: womencitytypesToUpdate.createdAt || '',
+        updatedAt: womencitytypesToUpdate.updatedAt || '',
+       
       });
     }
   }, [womencitytypesToUpdate]);
@@ -43,12 +42,12 @@ const AdminWomenCityTypesForm = () => {
 
       if (womencitytypesToUpdate) {
         // If womencitytypesToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/womencitytypes/${womencitytypesToUpdate._id}`;
+        url = `http://localhost:5000/womenCityType/${womencitytypesToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If womencitytypesToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/womencitytypes';
+        url = 'http://localhost:5000/womenCityType';
         method = 'POST';
         action = 'created';
       }
@@ -103,62 +102,50 @@ const AdminWomenCityTypesForm = () => {
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="cityTitle" className="form-label">City Name</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="cityTitle"
+                      name="cityTitle"
+                      value={formData.cityTitle}
                       onChange={handleInputChange}
                     />
                   </div>
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="cityTitleInMarathi" className="form-label">City in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="cityTitleInMarathi"
+                      name="cityTitleInMarathi"
+                      value={formData.cityTitleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
-                      onChange={handleInputChange}
-
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />

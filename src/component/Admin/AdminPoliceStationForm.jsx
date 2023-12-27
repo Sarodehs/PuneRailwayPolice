@@ -9,21 +9,35 @@ const AdminPoliceStationForm = () => {
   const { policestationToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+   name:'',
+   nameInMarathi:'',
+   photo:'',
+   staticVillageMap:'',
+   contactNumber:'',
+   whatsappNumber:'',
+   email:'',
+   subDivision:'',
+   googleMapLink:'',
+   policePatilFile:'',
+   createdAt:'',
+   updatedAt:'',
   });
 
   useEffect(() => {
     if (policestationToUpdate) {
       setFormData({
         name: policestationToUpdate.name || '',
-        nameinmarathi: policestationToUpdate.nameinmarathi || '',
-        message: policestationToUpdate.message || '',
-        FromDate: policestationToUpdate.FromDate || '',
-        ToDate: policestationToUpdate.ToDate || '',
+        nameInMarathi: policestationToUpdate.nameInMarathi || '',
+        photo: policestationToUpdate.photo || '',
+        staticVillageMap: policestationToUpdate.staticVillageMap || '',
+        contactNumber: policestationToUpdate.contactNumber || '',
+        whatsappNumber: policestationToUpdate.whatsappNumber || '',
+        email: policestationToUpdate.email || '',
+        subDivision: policestationToUpdate.subDivision || '',
+        googleMapLink: policestationToUpdate.googleMapLink || '',
+        policePatilFile: policestationToUpdate.policePatilFile || '',
+        createdAt: policestationToUpdate.createdAt || '',
+        updatedAt: policestationToUpdate.updatedAt || '',
       });
     }
   }, [policestationToUpdate]);
@@ -43,12 +57,12 @@ const AdminPoliceStationForm = () => {
 
       if (policestationToUpdate) {
         // If policestationToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/policestation/${policestationToUpdate._id}`;
+        url = `http://localhost:5000/policeStation/${policestationToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If policestationToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/policestation';
+        url = 'http://localhost:5000/policeStation';
         method = 'POST';
         action = 'created';
       }
@@ -116,13 +130,13 @@ const AdminPoliceStationForm = () => {
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="nameInMarathi" className="form-label">Name in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="nameInMarathi"
+                      name="nameInMarathi"
+                      value={formData.nameInMarathi}
                       onChange={handleInputChange}
                       required
                     />
@@ -139,30 +153,117 @@ const AdminPoliceStationForm = () => {
 
                     />
                   </div>
+
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="staticVillageMap" className="form-label">Static Village Map</label>
                     <input
-                      type="date"
+                      type="text"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="staticVillageMap"
+                      name="staticVillageMap"
+                      value={formData.staticVillageMap} 
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="contactNumber" className="form-label">Contact Number</label>
                     <input
-                      type="date"
+                      type="number"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="contactNumber"
+                      name="contactNumber"
+                      value={formData.contactNumber}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
+                  <div className="mb-3">
+                    <label htmlFor="whatsappNumber" className="form-label">Whatsapp Number</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="whatsappNumber"
+                      name="whatsappNumber"
+                      value={formData.whatsappNumber}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="subDivision" className="form-label">Sub Division</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="subDivision"
+                      name="subDivision"
+                      value={formData.subDivision}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="googleMapLink" className="form-label">Google Map Link</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="googleMapLink"
+                      name="googleMapLink"
+                      value={formData.googleMapLink}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="policePatilFile" className="form-label">Police Patil File</label>
+                    <input
+                      type="file"
+                      className="form-control"
+                      id="policePatilFile"
+                      name="policePatilFile"
+                      value={formData.policePatilFile}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  
+ 
 
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>

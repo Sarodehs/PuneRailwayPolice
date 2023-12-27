@@ -14,7 +14,7 @@ const AdminContactOfficer = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/contactofficer");
+        const response = await fetch("http://localhost:5000/contactOfficer");
         if (response.ok) {
           const data = await response.json();
           setContactOfficer(data); // Update the state with the fetched data
@@ -39,21 +39,23 @@ const AdminContactOfficer = () => {
       alert('Invalid ID. Delete request not sent.');
       return;
     }
-
+  
     // Display a confirmation dialog
     const confirmed = window.confirm('Are you sure you want to delete this item?');
-
+  
     if (!confirmed) {
       return; // User canceled the operation
     }
-
+  
     try {
-      const response = await fetch(`http://localhost:5000/contactofficer/${id}`, {
+      const response = await fetch(`http://localhost:5000/contactOfficer/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
         // Remove the deleted item from the state
-        setData(data.filter(item => item.id !== id));
+        setContactOfficer((prevContactOfficers) =>
+          prevContactOfficers.filter((item) => item._id !== id)
+        );
         alert('Data deleted successfully.');
       } else {
         alert('Failed to delete data.');
@@ -64,7 +66,6 @@ const AdminContactOfficer = () => {
       console.error('Error:', error);
     }
   };
-
 
   // update
   const navigate = useNavigate();
@@ -94,6 +95,13 @@ const AdminContactOfficer = () => {
   const endIndex = startIndex + rowsToShow;
   const slicedContactOfficer = ContactOfficer.slice(startIndex, endIndex);
 
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
 
@@ -141,16 +149,23 @@ const AdminContactOfficer = () => {
                     <a href="/admincontactofficerform" className="btn btn-primary"><i className="fa-light fa-plus"></i> Add New</a>
                   </div>
                 </form>
-                <div className="card-body">
+                <div className="card-body" style={{ overflowX: 'auto' }}>
                   <table className="table table-striped">
                     <thead className='table-primary'>
                       <tr>
                         <th scope="col">Sr No.</th>
                         <th scope="col">Name</th>
                         <th scope="col">Name in Marathi</th>
-                        <th scope="col">Photo</th>
-                        <th scope="col">From Date</th>
-                        <th scope="col">To Date</th>
+                        <th scope="col">Contact Number</th>
+                        <th scope="col">Email If Select Email Division</th>
+                        <th scope="col">Police Station for Email Id</th>
+                        <th scope="col">Police Station for Email Id in marathi</th>
+                        <th scope="col">Whatsapp Number One</th>
+                        <th scope="col">Whatsapp Number Two (If Any)</th>
+                        <th scope="col">Whatsapp Number Three (If Any)</th>
+                        <th scope="col">Post</th>
+                        <th scope="col">Post In Marathi</th>
+                        <th scope="col">Division</th>
                         <th scope="col">Created At</th>
                         <th scope="col">Updated At</th>
                         <th scope="col">View</th>
@@ -159,19 +174,26 @@ const AdminContactOfficer = () => {
                     </thead>
                     <tbody>
                       <tr></tr>
-                      {slicedContactOfficer.map((item, index) => (
+                      {slicedContactOfficer  && slicedContactOfficer.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{item.name}</td>
-                          <td>{item.nameinmarathi}</td>
-                          <td>{item.Photo}</td>
-                          <td>{item.FromDate}</td>
-                          <td>{item.ToDate}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.nameInMarathi}</td>
+                          <td>{item.contactNumber}</td>
+                          <td>{item.emailDivision}</td>
+                          <td>{item.policestationforemailid}</td>
+                          <td>{item.policeStationForEmailInMarathi}</td>
+                          <td>{item.whatsappNumbers && item.whatsappNumbers.length > 0 ? item.whatsappNumbers[0] : 'N/A'}</td>
+                              <td>{item.whatsappNumbers && item.whatsappNumbers.length > 1 ? item.whatsappNumbers[1] : 'N/A'}</td>
+                              <td>{item.whatsappNumbers && item.whatsappNumbers.length > 2 ? item.whatsappNumbers[2] : 'N/A'}</td>
+                          <td>{item.post}</td>
+                          <td>{item.postInMarathi}</td>
+                          <td>{item.division}</td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                       <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -200,7 +222,30 @@ const AdminContactOfficer = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">WomenCityTypes </h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.cityTitle}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -218,4 +263,3 @@ const AdminContactOfficer = () => {
 }
 
 export default AdminContactOfficer
-

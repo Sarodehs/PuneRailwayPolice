@@ -14,7 +14,7 @@ const AdminCitizensAlert = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/citizensalert");
+        const response = await fetch("http://localhost:5000/citizensAlert");
         if (response.ok) {
           const data = await response.json();
           setCitizensAlert(data); // Update the state with the fetched data
@@ -48,7 +48,7 @@ const AdminCitizensAlert = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/citizensalert/${id}`, {
+      const response = await fetch(`http://localhost:5000/citizensAlert/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -94,7 +94,12 @@ const AdminCitizensAlert = () => {
   const endIndex = startIndex + rowsToShow;
   const slicedCitizensAlert = CitizensAlert.slice(startIndex, endIndex);
 
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
   return (
@@ -168,18 +173,18 @@ const AdminCitizensAlert = () => {
                           <td>{index + 1}</td>
                           <td>{item.title}</td>
                           <td>{item.titleInMarathi}</td>
-                          <td>{item.photo}</td>
+                          <td><img key={item._id} src={`http://localhost:5000/${item.photo}`} alt={item._id} className="img-fluid "/></td>
                           <td>{item.date}</td>
                           <td>{item.fileTitle}</td>
-                          <td>{item.file}</td>
+                          <td>{item.pdfFile}</td>
                           <td>{item.audioFile}</td>
                           <td>{item.youtubeVideoLink}</td>
                           <td>{item.otherLink}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                        <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -208,7 +213,31 @@ const AdminCitizensAlert = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">CompassionList</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.title}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                          
                 </div>
               </div>
             </div>
@@ -226,4 +255,3 @@ const AdminCitizensAlert = () => {
 }
 
 export default AdminCitizensAlert
-

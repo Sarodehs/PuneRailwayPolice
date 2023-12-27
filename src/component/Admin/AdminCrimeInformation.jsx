@@ -14,7 +14,7 @@ const AdminCrimeInformation = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/crimeinformation");
+        const response = await fetch("http://localhost:5000/crimeInformation");
         if (response.ok) {
           const data = await response.json();
           setCrimeInformation(data); // Update the state with the fetched data
@@ -48,7 +48,7 @@ const AdminCrimeInformation = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/crimeinformation/${id}`, {
+      const response = await fetch(`http://localhost:5000/crimeInformation/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -95,6 +95,12 @@ const AdminCrimeInformation = () => {
   const slicedCrimeInformation = CrimeInformation.slice(startIndex, endIndex);
 
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
   return (
@@ -146,11 +152,10 @@ const AdminCrimeInformation = () => {
                     <thead className='table-primary'>
                       <tr>
                         <th scope="col">Sr No.</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Name in Marathi</th>
-                        <th scope="col">Photo</th>
-                        <th scope="col">From Date</th>
-                        <th scope="col">To Date</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Title in Marathi</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">File</th>   
                         <th scope="col">Created At</th>
                         <th scope="col">Updated At</th>
                         <th scope="col">View</th>
@@ -162,16 +167,25 @@ const AdminCrimeInformation = () => {
                       {slicedCrimeInformation.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{item.name}</td>
-                          <td>{item.nameinmarathi}</td>
-                          <td>{item.Photo}</td>
-                          <td>{item.FromDate}</td>
-                          <td>{item.ToDate}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.title}</td>
+                          <td>{item.titleInMarathi}</td>
+                          <td>{item.date}</td>
+                          <td>
+                            <a href={`http://localhost:5000/${item.file}`} target="_blank">
+                            
+                                {item.file && item.file.toLowerCase().endsWith('.pdf') ? (
+                                  <i className="material-icons text-dark">picture_as_pdf</i>
+                                ) : (
+                                  <i className="material-icons text-dark">insert_drive_file</i>
+                                )}
+                            
+                            </a>
+                          </td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                           <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -200,7 +214,30 @@ const AdminCrimeInformation = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">Gazette</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.title}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -218,4 +255,3 @@ const AdminCrimeInformation = () => {
 }
 
 export default AdminCrimeInformation
-

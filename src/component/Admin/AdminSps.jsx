@@ -5,8 +5,6 @@ import Topnav from './Topnav'
 
 
 const AdminSps = () => {
-
-
   // get all
   const [Sps, setSps] = useState([]);
 
@@ -14,7 +12,7 @@ const AdminSps = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/sps");
+        const response = await fetch("http://localhost:5000/sp");
         if (response.ok) {
           const data = await response.json();
           setSps(data); // Update the state with the fetched data
@@ -33,7 +31,7 @@ const AdminSps = () => {
 
 
   // deleted
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const handleDelete = async (id) => {
     if (!id) {
       alert('Invalid ID. Delete request not sent.');
@@ -48,12 +46,12 @@ const AdminSps = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/sps/${id}`, {
+      const response = await fetch(`http://localhost:5000/sp/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
         // Remove the deleted item from the state
-        setData(data.filter(item => item.id !== id));
+        setSps(Sps.filter(item => item.id !== id));
         alert('Data deleted successfully.');
       } else {
         alert('Failed to delete data.');
@@ -94,6 +92,14 @@ const AdminSps = () => {
   const endIndex = startIndex + rowsToShow;
   const slicedSps = Sps.slice(startIndex, endIndex);
 
+
+  
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
 
@@ -162,16 +168,17 @@ const AdminSps = () => {
                       {slicedSps.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
+                          {/* <td>{item.srNumber}</td> */}
                           <td>{item.name}</td>
-                          <td>{item.nameinmarathi}</td>
-                          <td>{item.Photo}</td>
-                          <td>{item.FromDate}</td>
-                          <td>{item.ToDate}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.nameInMarathi}</td>
+                          <td><img key={item._id} src={`http://localhost:5000/${item.photo}`} alt={item._id} className="img-fluid w-25"/></td>
+                          <td>{item.fromDate}</td>
+                          <td>{item.toDate}</td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                        <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -200,7 +207,30 @@ const AdminSps = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">Police Station</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.name}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -217,5 +247,4 @@ const AdminSps = () => {
   )
 }
 
-export default AdminSps
-
+export default AdminSps;

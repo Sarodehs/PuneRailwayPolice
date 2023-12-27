@@ -11,19 +11,19 @@ const AdminImprotantWebsitesForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     nameInMarathi: '',
-    message: '',
-    fromDate: '',
-    toDate: '',
+    link:'',
+    createdAt:'',
+    updatedAt:'',
   });
 
   useEffect(() => {
     if (improtantwebsitesToUpdate) {
       setFormData({
         name: improtantwebsitesToUpdate.name || '',
-        nameinmarathi: improtantwebsitesToUpdate.nameinmarathi || '',
-        message: improtantwebsitesToUpdate.message || '',
-        fromDate: improtantwebsitesToUpdate.fromDate || '',
-        toDate: improtantwebsitesToUpdate.toDate || '',
+        nameInMarathi: improtantwebsitesToUpdate.nameInMarathi || '',
+        link: improtantwebsitesToUpdate.link || '',
+        createdAt: improtantwebsitesToUpdate.createdAt || '',
+        updatedAt: improtantwebsitesToUpdate.updatedAt || '',
       });
     }
   }, [improtantwebsitesToUpdate]);
@@ -43,12 +43,12 @@ const AdminImprotantWebsitesForm = () => {
 
       if (improtantwebsitesToUpdate) {
         // If improtantwebsitesToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/improtantwebsites/${improtantwebsitesToUpdate._id}`;
+        url = `http://localhost:5000/importantWebsites/${improtantwebsitesToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If improtantwebsitesToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/improtantwebsites';
+        url = 'http://localhost:5000/importantWebsites';
         method = 'POST';
         action = 'created';
       }
@@ -116,12 +116,12 @@ const AdminImprotantWebsitesForm = () => {
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="nameInMarathi" className="form-label">Name in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
+                      id="nameInMarathi"
+                      name="nameInMarathi"
                       value={formData.nameInMarathi}
                       onChange={handleInputChange}
                       required
@@ -140,25 +140,25 @@ const AdminImprotantWebsitesForm = () => {
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="CreatedAt" className="form-label">Created At</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="CreatedAt"
-                      name="CreatedAt"
-                      value={formData.CreatedAt} 
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt} 
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="UpdatedAt" className="form-label">Updated At</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="UpdatedAt"
-                      name="UpdatedAt"
-                      value={formData.UpdatedAt}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />

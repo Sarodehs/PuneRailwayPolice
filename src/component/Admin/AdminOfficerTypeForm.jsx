@@ -9,21 +9,20 @@ const AdminOfficerTypeForm = () => {
   const { officertypeToUpdate } = location.state || {};
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+   title:'',
+   titleInMarathi:'',
+   createdAt:'',
+   updatedAt:'',
   });
 
   useEffect(() => {
     if (officertypeToUpdate) {
       setFormData({
-        name: officertypeToUpdate.name || '',
-        nameinmarathi: officertypeToUpdate.nameinmarathi || '',
-        message: officertypeToUpdate.message || '',
-        FromDate: officertypeToUpdate.FromDate || '',
-        ToDate: officertypeToUpdate.ToDate || '',
+        title: officertypeToUpdate.title || '',
+        titleInMarathi: officertypeToUpdate.titleInMarathi || '',
+        createdAt: officertypeToUpdate.createdAt || '',
+        updatedAt: officertypeToUpdate.updatedAt || '',
+       
       });
     }
   }, [officertypeToUpdate]);
@@ -43,12 +42,12 @@ const AdminOfficerTypeForm = () => {
 
       if (officertypeToUpdate) {
         // If officertypeToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/officertype/${officertypeToUpdate._id}`;
+        url = `http://localhost:5000/officerType/${officertypeToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If officertypeToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/officertype';
+        url = 'http://localhost:5000/officerType';
         method = 'POST';
         action = 'created';
       }
@@ -97,82 +96,66 @@ const AdminOfficerTypeForm = () => {
             <div className="row p-3 ">
               <div className="col-xl-12 bg-light rounded">
               <a href="/adminofficertype" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
-                  OfficerType</h3>
+                  Officer Type</h3>
                   </a>
                 <hr />
-
+                
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="title" className="form-label">Title</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="title"
+                      name="title"
+                      value={formData.title}
                       onChange={handleInputChange}
                     />
                   </div>
 
 
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="titleInMarathi" className="form-label">Title in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="titleInMarathi"
+                      name="titleInMarathi"
+                      value={formData.titleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
-                      type="file"
+                      type="date"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
 
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt} 
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>
 
 
 
               </div>
-
-
-
 
             </div>
 

@@ -1,38 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
-
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminSpsMessageForm = () => {
 
+const AdminSpsMessageForm = () => {
   const location = useLocation();
   const { spsmessageToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+    nameInMarathi: '',
+    postInMarathi: '',
+    post: '',
+    photo: null,
+    CreatedAt: '',
+    UpdatedAt: '',
   });
 
   useEffect(() => {
     if (spsmessageToUpdate) {
       setFormData({
         name: spsmessageToUpdate.name || '',
-        nameinmarathi: spsmessageToUpdate.nameinmarathi || '',
-        message: spsmessageToUpdate.message || '',
-        FromDate: spsmessageToUpdate.FromDate || '',
-        ToDate: spsmessageToUpdate.ToDate || '',
+        nameInMarathi: spsmessageToUpdate.nameInMarathi || '',
+        post: spsmessageToUpdate.post || '',
+        postInMarathi: spsmessageToUpdate.postInMarathi || '',
+        photo: spsmessageToUpdate.photo || null,
+        CreatedAt: spsmessageToUpdate.CreatedAt || '',
+        UpdatedAt: spsmessageToUpdate.UpdatedAt || '',
       });
     }
   }, [spsmessageToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+    const { name, value, type } = e.target;
 
+    if (type === 'file') {
+      setFormData({ ...formData, image: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    
+    
+  };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -42,33 +52,40 @@ const AdminSpsMessageForm = () => {
       let action;
 
       if (spsmessageToUpdate) {
-        // If spsToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/spsmessage/${spsmessageToUpdate._id}`;
+        // If spsmessageToUpdate exists, perform an update (PUT request)
+        url = `http://localhost:5000/spsMessage/${spsmessageToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
         // If spsmessageToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/spsmessage';
+        url = 'http://localhost:5000/spsMessage';
         method = 'POST';
         action = 'created';
       }
 
+      const formDataForUpload = new FormData();
+      formDataForUpload.append('name', formData.name);
+      formDataForUpload.append('nameInMarathi', formData.nameInMarathi);
+      formDataForUpload.append('post', formData.post);
+      formDataForUpload.append('postInMarathi', formData.postInMarathi);
+      formDataForUpload.append('CreatedAt', formData.CreatedAt);
+      formDataForUpload.append('UpdatedAt', formData.UpdatedAt);
+     
+      formDataForUpload.append('image', formData.image);
+      
+
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataForUpload,
       });
 
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/adminspsmessage')
+        navigate('/adminspsmessage');
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
-
       }
     } catch (error) {
       console.error('Error:', error.message);
@@ -76,29 +93,24 @@ const AdminSpsMessageForm = () => {
     }
   };
 
-
   return (
     <div>
       <div className="">
-        {/* <Topnav/> */}
         <div className="row">
-          {/* <!-- side nav start --> */}
-          <div className="col-md-2 col-xl-2 col-sm-2 " >
+          <div className="col-md-2 col-xl-2 col-sm-2 ">
             <Sidenav />
           </div>
-          {/* <!-- side nav end --> */}
 
-          {/* <!-- Content area start --> */}
-          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0" >
-            {/* Topnav start*/}
+          <div className="col-md-10 col-xl-10 col-sm-10 justify-content-center pe-0 ps-0">
             <Topnav />
-            {/* topnav end*/}
-
-            <div className="row p-3 ">
+            <div className="row p-3">
               <div className="col-xl-12 bg-light rounded">
-              <a href="/adminspsmessage" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
-                  Sps Message</h3>
-                  </a>
+                <a href="/adminspsmessage" className="text-decoration-none text-dark">
+                  <h3 className='m-3'>
+                    <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
+                    Sps Message
+                  </h3>
+                </a>
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
@@ -113,31 +125,19 @@ const AdminSpsMessageForm = () => {
                     />
                   </div>
 
-
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="nameInMarathi" className="form-label">Name in Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="nameInMarathi"
+                      name="nameInMarathi"
+                      value={formData.nameInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
-                      onChange={handleInputChange}
 
-                    />
-                  </div>
                   <div className="mb-3">
                     <label htmlFor="post" className="form-label">Post</label>
                     <input
@@ -145,69 +145,72 @@ const AdminSpsMessageForm = () => {
                       className="form-control"
                       id="post"
                       name="post"
-                      value={formData.post} 
+                      value={formData.post}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
+
                   <div className="mb-3">
-                    <label htmlFor="postinmarathi" className="form-label">Post In Marathi</label>
+                    <label htmlFor="postInMarathi" className="form-label">Post In Marathi</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="postinmarathi"
-                      name="postinmarathi"
-                      value={formData.postinmarathi}
+                      id="postInMarathi"
+                      name="postInMarathi"
+                      value={formData.postInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-                  {/* <div className="mb-3">
-                    <label htmlFor="about" className="form-label">About</label>
-                    <textarea
-                      type="text"
-                      className="form-control"
-                      id="about"
-                      name="about"
-                      value={formData.about}
-                      onChange={handleInputChange}
-                      required
-                      rows={3}
-                    />
-                  </div>
+
                   <div className="mb-3">
-                    <label htmlFor="aboutinmarathi" className="form-label">About In Marathi</label>
-                    <textarea
-                      type="text"
+                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <input
+                      type="file"
                       className="form-control"
-                      id="aboutinmarathi"
-                      name="aboutinmarathi"
-                      value={formData.aboutinmarathi}
+                      id="photo"
+                      name="image"
+                      ref={fileInputRef}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="CreatedAt" className="form-label">Created At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="CreatedAt"
+                      name="CreatedAt"
+                      value={formData.CreatedAt}
                       onChange={handleInputChange}
                       required
-                      rows={3}
                     />
-                  </div> */}
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="UpdatedAt" className="form-label">Updated At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="UpdatedAt"
+                      name="UpdatedAt"
+                      value={formData.UpdatedAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>
-
-
-
               </div>
-
-
-
-
             </div>
-
-            {/* <!-- Content area start --> */}
           </div>
-          {/* <Footer /> */}
         </div>
-
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminSpsMessageForm
+export default AdminSpsMessageForm;

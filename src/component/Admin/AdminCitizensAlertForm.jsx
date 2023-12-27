@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
-
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminCitizensAlertForm = () => {
 
+const AdminCitizensAlertForm = () => {
   const location = useLocation();
   const { citizensalertToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const photoInputRef = useRef(null);
+  const audioInputRef = useRef(null); 
   const [formData, setFormData] = useState({
-  title:'',
-  titleInMarathi:'',
-  photo:'',
-  date:'',
-  fileTitle:'',
-  file:'',
-  audioFile:'',
-  youtubeVideoLink:'',
-  otherLink:'',
-  CreatedAt:'',
-  UpdatedAt:'',
+    title: '',
+    titleInMarathi: '',
+    photo: null,
+    date: '',
+    fileTitle: '',
+    pdfFile: null,
+    audioFile: null,
+    youtubeVideoLink: '',
+    otherLink: '',
+    createdAt: '',
+    updatedAt: '',
   });
 
   useEffect(() => {
@@ -27,21 +29,44 @@ const AdminCitizensAlertForm = () => {
       setFormData({
         title: citizensalertToUpdate.title || '',
         titleInMarathi: citizensalertToUpdate.titleInMarathi || '',
-        photo: citizensalertToUpdate.photo || '',
+        photo: citizensalertToUpdate.photo || null,
         date: citizensalertToUpdate.date || '',
         fileTitle: citizensalertToUpdate.fileTitle || '',
-        file: citizensalertToUpdate.file || '',
-        audioFile: citizensalertToUpdate.audioFile || '',
+        pdfFile: citizensalertToUpdate.pdfFile || null,
+        audioFile: citizensalertToUpdate.audioFile || null,
         youtubeVideoLink: citizensalertToUpdate.youtubeVideoLink || '',
         otherLink: citizensalertToUpdate.otherLink || '',
-
+        createdAt: citizensalertToUpdate.createdAt || '',
+        updatedAt: citizensalertToUpdate.updatedAt || '',
       });
     }
   }, [citizensalertToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, type } = e.target;
+
+    if (type === 'file') {
+      // Handle audio file input separately
+      if (name === 'audioFile') {
+        setFormData({ ...formData, [name]: e.target.files[0] || null });
+      } else {
+        // For other file inputs (photo, pdf), clear the input
+        clearFileInput(e.target);
+      }
+    } else {
+      setFormData({ ...formData, [name]: e.target.value });
+    }
+  };
+
+  
+  const clearFileInput = (input) => {
+    try {
+      const newInput = document.createElement('input');
+      newInput.type = 'file';
+      input.parentNode.replaceChild(newInput, input);
+    } catch (error) {
+      console.error('Error clearing file input:', error.message);
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -51,35 +76,52 @@ const AdminCitizensAlertForm = () => {
       let url;
       let method;
       let action;
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('titleInMarathi', formData.titleInMarathi);
+      formDataToSend.append('date', formData.date);
+      formDataToSend.append('fileTitle', formData.fileTitle);
+      // formDataToSend.append('audioFile', formData.audioFile);
+      formDataToSend.append('youtubeVideoLink', formData.youtubeVideoLink);
+      formDataToSend.append('otherLink', formData.otherLink);
+      formDataToSend.append('createdAt', formData.createdAt);
+      formDataToSend.append('updatedAt', formData.updatedAt);
+
+
+      if (photoInputRef.current && photoInputRef.current.files.length > 0) {
+        formDataToSend.append('image', photoInputRef.current.files[0]);
+      }
+      if (fileInputRef.current && fileInputRef.current.files.length > 0) {
+        formDataToSend.append('pdf', fileInputRef.current.files[0]);
+      }
+      
+      if (audioInputRef.current && audioInputRef.current.files.length > 0) {
+        formDataToSend.append('audio', audioInputRef.current.files[0]);
+      }
 
       if (citizensalertToUpdate) {
-        // If citizensalertToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/citizensalert/${citizensalertToUpdate._id}`;
+        url = `http://localhost:5000/citizensAlert/${citizensalertToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
-        // If citizensalertToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/citizensalert';
+        url = 'http://localhost:5000/citizensAlert';
         method = 'POST';
         action = 'created';
       }
 
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
-
+      
       if (response.ok) {
+        const errorData = await response.json();
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/admincitizensalert')
+        navigate('/admincitizensalert');
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
-
       }
     } catch (error) {
       console.error('Error:', error.message);
@@ -144,10 +186,9 @@ const AdminCitizensAlertForm = () => {
                       type="file"
                       className="form-control"
                       id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      name="image"
+                      ref={photoInputRef}
                       onChange={handleInputChange}
-
                     />
                   </div>
                   <div className="mb-3">
@@ -157,19 +198,34 @@ const AdminCitizensAlertForm = () => {
                       className="form-control"
                       id="date"
                       name="date"
-                      value={formData.date} 
+                     
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div> 
+                  <div className="mb-3">
+                    <label htmlFor="fileTitle" className="form-label"> File Title</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="fileTitle"
+                      name="fileTitle"
+                      value={formData.fileTitle}
                       onChange={handleInputChange}
                       required
                     />
                   </div>               
                   <div className="mb-3">
-                    <label htmlFor="file" className="form-label">File</label>
+                    <label htmlFor="pdfFile" className="form-label">
+                      File
+                    </label>
                     <input
                       type="file"
                       className="form-control"
-                      id="file"
-                      name="file"
-                      value={formData.file}
+                      id="pdfFile"
+                      name="pdf"
+                      ref={fileInputRef}
+                      accept=".pdf"
                       onChange={handleInputChange}
                       required
                     />
@@ -181,7 +237,7 @@ const AdminCitizensAlertForm = () => {
                       className="form-control"
                       id="audioFile"
                       name="audioFile"
-                      value={formData.audioFile}
+                      ref={audioInputRef}
                       onChange={handleInputChange}
                       required
                     />
@@ -211,25 +267,25 @@ const AdminCitizensAlertForm = () => {
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="CreatedAt" className="form-label">Created At</label>
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="CreatedAt"
-                      name="CreatedAt"
-                      value={formData.CreatedAt}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="UpdatedAt" className="form-label">Updated At</label>
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
                     <input
                       type="date"
                       className="form-control"
-                      id="UpdatedAt"
-                      name="UpdatedAt"
-                      value={formData.UpdatedAt}
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
                       onChange={handleInputChange}
                       required
                     />

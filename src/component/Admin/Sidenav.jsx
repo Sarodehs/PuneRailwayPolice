@@ -45,7 +45,7 @@ const Sidenav = () => {
                         </a></NavLink>
                     </li>
                     <li className={({ isActive }) => (isActive ? 'main-nav-active' : 'inactive')}>
-                        <NavLink to="/adminwomenhelp" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
+                        <NavLink to="/adminwomenhelpdesk" className="text-decoration-none "><a href="/#" className="nav-link  align-middle d-flex">
                         <span className="material-icons">east</span><span className="ms-3 d-none d-md-inline"> Women Help</span>
                         </a></NavLink>
                     </li>

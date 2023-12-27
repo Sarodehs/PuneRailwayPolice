@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
-
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminAddAlbumNameForm = () => {
 
+const AdminAddAlbumNameForm = () => {
   const location = useLocation();
   const { addalbumnameToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     albumNameInEnglish: '',
     albumNameInMarathi: '',
     priority: '',
-    albumCoverPhoto: '',
+    albumCoverPhoto: null,
     createdAt: '',
     updatedAt: '',
   });
@@ -23,17 +24,21 @@ const AdminAddAlbumNameForm = () => {
         albumNameInEnglish: addalbumnameToUpdate.albumNameInEnglish || '',
         albumNameInMarathi: addalbumnameToUpdate.albumNameInMarathi || '',
         priority: addalbumnameToUpdate.priority || '',
-        albumCoverPhoto: addalbumnameToUpdate.albumCoverPhoto || '',
+        albumCoverPhoto: addalbumnameToUpdate.albumCoverPhoto || null,
         createdAt: addalbumnameToUpdate.createdAt || '',
         updatedAt: addalbumnameToUpdate.updatedAt || '',
-
       });
     }
   }, [addalbumnameToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, albumCoverPhoto: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -45,33 +50,41 @@ const AdminAddAlbumNameForm = () => {
       let action;
 
       if (addalbumnameToUpdate) {
-        // If addalbumnameToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/addPhotosToAlbum/${addalbumnameToUpdate._id}`;
+        url = `http://localhost:5000/addAlbumName/${addalbumnameToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
-        // If addalbumnameToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/addPhotosToAlbum';
+        url = 'http://localhost:5000/addAlbumName';
         method = 'POST';
         action = 'created';
       }
 
+      console.log('Backend URL:', url);
+
+      const formDataWithFile = new FormData();
+      formDataWithFile.append('albumNameInEnglish', formData.albumNameInEnglish);
+      formDataWithFile.append('albumNameInMarathi', formData.albumNameInMarathi);
+      formDataWithFile.append('priority', formData.priority);
+      formDataWithFile.append('image', formData.albumCoverPhoto);
+      formDataWithFile.append('createdAt', formData.createdAt);
+      formDataWithFile.append('updatedAt', formData.updatedAt);
+
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataWithFile,
       });
 
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/adminaddalbumname')
+        navigate('/adminaddalbumname');
       } else {
         const errorData = await response.json();
-        throw new Error(`${response.status} - ${errorData.message}`);
-
+        if (errorData.message === 'No file uploaded') {
+          throw new Error('Please upload an image file');
+        } else {
+          throw new Error(`${response.status} - ${errorData.message}`);
+        }
       }
     } catch (error) {
       console.error('Error:', error.message);
@@ -79,8 +92,7 @@ const AdminAddAlbumNameForm = () => {
     }
   };
 
-
-  return (
+   return   (
     <div>
       <div className="">
         {/* <Topnav/> */}
@@ -148,7 +160,8 @@ const AdminAddAlbumNameForm = () => {
                       className="form-control"
                       id="albumCoverPhoto"
                       name="albumCoverPhoto"
-                      value={formData.albumCoverPhoto} 
+                      ref={fileInputRef}
+                      accept="image/*"
                       onChange={handleInputChange}
                       required
                     />
@@ -199,4 +212,4 @@ const AdminAddAlbumNameForm = () => {
   )
 }
 
-export default AdminAddAlbumNameForm
+export default AdminAddAlbumNameForm 

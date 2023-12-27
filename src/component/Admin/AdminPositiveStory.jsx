@@ -14,7 +14,7 @@ const AdminPositiveStory = () => {
     // Define a function to fetch data
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/positivestory");
+        const response = await fetch("http://localhost:5000/positiveStories");
         if (response.ok) {
           const data = await response.json();
           setPositiveStory(data); // Update the state with the fetched data
@@ -48,7 +48,7 @@ const AdminPositiveStory = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/positivestory/${id}`, {
+      const response = await fetch(`http://localhost:5000/positiveStories/${id}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -94,7 +94,12 @@ const AdminPositiveStory = () => {
   const endIndex = startIndex + rowsToShow;
   const slicedPositiveStory = PositiveStory.slice(startIndex, endIndex);
 
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const handleView = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
 
   return (
@@ -141,16 +146,17 @@ const AdminPositiveStory = () => {
                     <a href="/adminpositivestoryform" className="btn btn-primary"><i className="fa-light fa-plus"></i> Add New</a>
                   </div>
                 </form>
-                <div className="card-body">
+                <div className="card-body admintablesroll">
                   <table className="table table-striped">
                     <thead className='table-primary'>
                       <tr>
                         <th scope="col">Sr No.</th>
                         <th scope="col">Name</th>
                         <th scope="col">Name in Marathi</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Link</th>
+                        <th scope="col">File</th>
                         <th scope="col">Photo</th>
-                        <th scope="col">From Date</th>
-                        <th scope="col">To Date</th>
                         <th scope="col">Created At</th>
                         <th scope="col">Updated At</th>
                         <th scope="col">View</th>
@@ -162,16 +168,17 @@ const AdminPositiveStory = () => {
                       {slicedPositiveStory.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
-                          <td>{item.name}</td>
-                          <td>{item.nameinmarathi}</td>
-                          <td>{item.Photo}</td>
-                          <td>{item.FromDate}</td>
-                          <td>{item.ToDate}</td>
-                          <td>{item.CreatedAt}</td>
-                          <td>{item.UpdatedAt}</td>
+                          <td>{item.title}</td>
+                          <td>{item.titleInMarathi}</td>
+                          <td>{item.date}</td>
+                          <td>{item.link}</td>
+                          <td>{item.pdfFile}</td>
+                          <td><img key={item._id} src={`http://localhost:5000/${item.photo}`} alt={item._id} className="img-fluid "/></td>
+                          <td>{item.createdAt}</td>
+                          <td>{item.updatedAt}</td>
 
-                          <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
-                          <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
+                          <td><button type="button" onClick={() => handleView(item)} class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop"> View </button></td>
+                           <td type="button" onClick={() => handleUpdate(item)}><span class="material-icons ">edit_square </span></td>
                           <td type="button" onClick={() => handleDelete(item._id)}><span class="material-icons">delete</span></td>
 
                         </tr>
@@ -200,7 +207,30 @@ const AdminPositiveStory = () => {
                       </li>
                     </ul>
                   </nav>
-
+                  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"  style={{ display: modalOpen ? 'block' : 'none' }}>
+                              <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropLabel">positive Stories</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                         <div className="modal-body">
+                          {selectedItem && (
+                            <>
+                              <p>{selectedItem.createdAt}</p>
+                              <p>{selectedItem.title}</p>
+                              {/* Display other fields of the selectedItem */}
+                            </>
+                          )}
+                        </div> </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          {/* <button type="button" class="btn btn-primary">PDF</button> */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -218,4 +248,3 @@ const AdminPositiveStory = () => {
 }
 
 export default AdminPositiveStory
-

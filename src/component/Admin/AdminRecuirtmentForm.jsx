@@ -1,36 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
-
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminRecuirtmentForm = () => {
 
+const AdminRecuirtmentForm = () => {
   const location = useLocation();
   const { recuirtmentToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
-    name: '',
-    nameinmarathi: '',
-    message: '',
-    FromDate: '',
-    ToDate: '',
+    title: '',
+    titleInMarathi: '',
+    date: '',
+    file: null,
+    link: '',
+    createdAt: '',
+    updatedAt: '',
   });
 
   useEffect(() => {
     if (recuirtmentToUpdate) {
       setFormData({
-        name: recuirtmentToUpdate.name || '',
-        nameinmarathi: recuirtmentToUpdate.nameinmarathi || '',
-        message: recuirtmentToUpdate.message || '',
-        FromDate: recuirtmentToUpdate.FromDate || '',
-        ToDate: recuirtmentToUpdate.ToDate || '',
+        title: recuirtmentToUpdate.title || '',
+        titleInMarathi: recuirtmentToUpdate.titleInMarathi || '',
+        date: recuirtmentToUpdate.date || '',
+        file: recuirtmentToUpdate.file || null,
+        link: recuirtmentToUpdate.link || '',
+        createdAt: recuirtmentToUpdate.createdAt || '',
+        updatedAt: recuirtmentToUpdate.updatedAt || '',
       });
     }
   }, [recuirtmentToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, file: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -40,6 +49,19 @@ const AdminRecuirtmentForm = () => {
       let url;
       let method;
       let action;
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('titleInMarathi', formData.titleInMarathi);
+      formDataToSend.append('date', formData.date);
+      formDataToSend.append('link', formData.link);
+      formDataToSend.append('createdAt', formData.createdAt);
+      formDataToSend.append('updatedAt', formData.updatedAt);
+
+      // Append file only if it exists
+      if (formData.file) {
+        formDataToSend.append('pdf', formData.file);
+      }
 
       if (recuirtmentToUpdate) {
         // If recuirtmentToUpdate exists, perform an update (PUT request)
@@ -55,135 +77,152 @@ const AdminRecuirtmentForm = () => {
 
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/adminrecuirtment')
+        navigate('/adminrecuirtment');
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
-
       }
     } catch (error) {
       console.error('Error:', error.message);
-      window.alert('Error:', error.message);
+      window.alert(`Error: ${error.message}`);
     }
   };
-
 
   return (
     <div>
       <div className="">
-        {/* <Topnav/> */}
         <div className="row">
-          {/* <!-- side nav start --> */}
-          <div className="col-md-2 col-xl-2 col-sm-2 " >
+          <div className="col-md-2 col-xl-2 col-sm-2 ">
             <Sidenav />
           </div>
-          {/* <!-- side nav end --> */}
-
-          {/* <!-- Content area start --> */}
-          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0" >
-            {/* Topnav start*/}
+          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0">
             <Topnav />
-            {/* topnav end*/}
-
             <div className="row p-3 ">
               <div className="col-xl-12 bg-light rounded">
-              <a href="/adminrecuirtment" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
-                  Recuirtment</h3>
-                  </a>
+                <a href="/adminrecuirtment" className="text-decoration-none text-dark">
+                  <h3 className="m-3">
+                    <span className="material-icons-outlined pe-3 p-2">arrow_back</span>Recuirtment
+                  </h3>
+                </a>
                 <hr />
 
                 <form onSubmit={handleFormSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="name" className="form-label">Name</label>
+                    <label htmlFor="title" className="form-label">
+                      Title
+                    </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="name"
-                      name="name"
-                      value={formData.name}
+                      id="title"
+                      name="title"
+                      value={formData.title}
                       onChange={handleInputChange}
                     />
                   </div>
 
-
                   <div className="mb-3">
-                    <label htmlFor="nameinmarathi" className="form-label">Name in Marathi</label>
+                    <label htmlFor="titleInMarathi" className="form-label">
+                      Title in Marathi
+                    </label>
                     <input
                       type="text"
                       className="form-control"
-                      id="nameinmarathi"
-                      name="nameinmarathi"
-                      value={formData.nameinmarathi}
+                      id="titleInMarathi"
+                      name="titleInMarathi"
+                      value={formData.titleInMarathi}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="photo" className="form-label">Photo</label>
+                    <label htmlFor="date" className="form-label">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  
+                  <div className="mb-3">
+                    <label htmlFor="file" className="form-label">
+                      File
+                    </label>
                     <input
                       type="file"
                       className="form-control"
-                      id="photo"
-                      name="photo"
-                      value={formData.photo}
+                      id="file"
+                      name="file"
+                      ref={fileInputRef}
+                      accept=".pdf"
                       onChange={handleInputChange}
-
                     />
                   </div>
+
                   <div className="mb-3">
-                    <label htmlFor="FromDate" className="form-label">From Date</label>
+                    <label htmlFor="link" className="form-label">
+                      Link
+                    </label>
                     <input
-                      type="date"
+                      type="text"
                       className="form-control"
-                      id="FromDate"
-                      name="FromDate"
-                      value={formData.FromDate} 
+                      id="link"
+                      name="link"
+                      value={formData.link}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor="ToDate" className="form-label">To Date</label>
+                    <label htmlFor="createdAt" className="form-label">
+                      Created At
+                    </label>
                     <input
                       type="date"
                       className="form-control"
-                      id="ToDate"
-                      name="ToDate"
-                      value={formData.ToDate}
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
                       onChange={handleInputChange}
                       required
                     />
                   </div>
-
-                  <button type="submit" className="btn btn-primary">Save Changes</button>
+                  <div className="mb-3">
+                    <label htmlFor="updatedAt" className="form-label">
+                      Updated At
+                    </label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn btn-primary">
+                    Save Changes
+                  </button>
                 </form>
-
-
-
               </div>
-
-
-
-
             </div>
-
-            {/* <!-- Content area start --> */}
           </div>
-          {/* <Footer /> */}
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminRecuirtmentForm
+export default AdminRecuirtmentForm;

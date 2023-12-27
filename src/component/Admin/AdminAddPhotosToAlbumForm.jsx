@@ -1,32 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import Sidenav from './Sidenav'
-import Topnav from './Topnav'
+import React, { useState, useEffect, useRef } from 'react';
+import Sidenav from './Sidenav';
+import Topnav from './Topnav';
 
 import { useLocation, useNavigate } from 'react-router-dom';
-const AdminAddPhotosToAlbumForm = () => {
 
+const AdminAddPhotosToAlbumForm = () => {
   const location = useLocation();
-  const {addphotosToUpdate } = location.state || {};
+  const { addphotosToUpdate } = location.state || {};
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
-    image:'',
-    selectAlbum:'',
-  
+    image: null,
+    selectAlbum: '',
+    createdAt: '',
+    updatedAt: '',
   });
-  
+
+  const [previewImage, setPreviewImage] = useState(null);
+  const [previewLogo, setPreviewLogo] = useState(null); // New state for logo preview
+
   useEffect(() => {
-    if (addphotosToUpdate) {
-      setFormData({
-        image: addphotosToUpdate.image || '',
-        selectAlbum: addphotosToUpdate.selectAlbum || '',
-       
-      });
+    if (formData.image) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(formData.image);
+    } else {
+      setPreviewImage(null);
+    }
+  }, [formData.image]);
+
+  // Use effect to update logo preview when item.photo changes
+  useEffect(() => {
+    if (addphotosToUpdate && addphotosToUpdate.photo) {
+      setPreviewLogo(addphotosToUpdate.photo);
+    } else {
+      setPreviewLogo(null);
     }
   }, [addphotosToUpdate]);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type } = e.target;
+
+    if (type === 'file') {
+      setFormData({ ...formData, image: e.target.files[0] || null });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -38,33 +60,35 @@ const AdminAddPhotosToAlbumForm = () => {
       let action;
 
       if (addphotosToUpdate) {
-        // If addphotosToUpdate exists, perform an update (PUT request)
-        url = `http://localhost:5000/addphotos/${addphotosToUpdate._id}`;
+        url = `http://localhost:5000/addPhotosToAlbum/${addphotosToUpdate._id}`;
         method = 'PUT';
         action = 'updated';
       } else {
-        // If addphotosToUpdate doesn't exist, create a new entry (POST request)
-        url = 'http://localhost:5000/addphotos';
+        url = 'http://localhost:5000/addPhotosToAlbum';
         method = 'POST';
         action = 'created';
       }
 
+      console.log('Backend URL:', url);
+
+      const formDataWithFile = new FormData();
+      formDataWithFile.append('image', formData.image);
+      formDataWithFile.append('selectAlbum', formData.selectAlbum);
+      formDataWithFile.append('createdAt', formData.createdAt);
+      formDataWithFile.append('updatedAt', formData.updatedAt);
+
       const response = await fetch(url, {
         method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataWithFile,
       });
 
       if (response.ok) {
         console.log(`Data ${action} successfully`);
         window.alert(`Data ${action} successfully`);
-        navigate('/adminaddphotostoalbum')
+        navigate('/adminaddphotostoalbum');
       } else {
         const errorData = await response.json();
         throw new Error(`${response.status} - ${errorData.message}`);
-
       }
     } catch (error) {
       console.error('Error:', error.message);
@@ -72,29 +96,24 @@ const AdminAddPhotosToAlbumForm = () => {
     }
   };
 
-
   return (
     <div>
       <div className="">
-        {/* <Topnav/> */}
         <div className="row">
-          {/* <!-- side nav start --> */}
-          <div className="col-md-2 col-xl-2 col-sm-2 " >
+          <div className="col-md-2 col-xl-2 col-sm-2 ">
             <Sidenav />
           </div>
-          {/* <!-- side nav end --> */}
 
-          {/* <!-- Content area start --> */}
-          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0" >
-            {/* Topnav start*/}
+          <div className=" col-md-10 col-xl-10 col-sm-10  justify-content-center pe-0 ps-0">
             <Topnav />
-            {/* topnav end*/}
-
             <div className="row p-3 ">
               <div className="col-xl-12 bg-light rounded">
-              <a href="/adminaddphotostoalbum" className="text-decoration-none text-dark"> <h3 className='m-3'> <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
-              Add Photos To Album</h3>
-                  </a>
+                <a href="/adminaddphotostoalbum" className="text-decoration-none text-dark">
+                  <h3 className='m-3'>
+                    <span className="material-icons-outlined pe-3 p-2">arrow_back</span>
+                    Add Photos To Album
+                  </h3>
+                </a>
                 <hr />
 
                 <form onSubmit={handleFormSubmit}>
@@ -105,14 +124,15 @@ const AdminAddPhotosToAlbumForm = () => {
                       className="form-control"
                       id="image"
                       name="image"
-                      value={formData.image}
+                      ref={fileInputRef}
+                      accept="image/*"
                       onChange={handleInputChange}
                     />
                   </div>
 
-
+                  
                   <div className="mb-3">
-                    <label htmlFor="selectAlbum" className="form-label">select Album</label>
+                    <label htmlFor="selectAlbum" className="form-label">Select Album</label>
                     <input
                       type="text"
                       className="form-control"
@@ -123,29 +143,55 @@ const AdminAddPhotosToAlbumForm = () => {
                       required
                     />
                   </div>
-                  
-                 
-                
+
+                  {/* Display the logo preview in a table cell */}
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td>
+                          {previewLogo && (
+                            <img src={previewLogo} className="img-fluid w-25" alt="logo" />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="mb-3">
+                    <label htmlFor="createdAt" className="form-label">Created At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="createdAt"
+                      name="createdAt"
+                      value={formData.createdAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label htmlFor="updatedAt" className="form-label">Updated At</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      id="updatedAt"
+                      name="updatedAt"
+                      value={formData.updatedAt}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
                   <button type="submit" className="btn btn-primary">Save Changes</button>
                 </form>
-
-
-
               </div>
-
-
-
-
             </div>
-
-            {/* <!-- Content area start --> */}
           </div>
-          {/* <Footer /> */}
         </div>
-
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminAddPhotosToAlbumForm
+export default AdminAddPhotosToAlbumForm;
